@@ -1,0 +1,101 @@
+﻿@model bazargharnext.Models.Category
+<style>
+    container {
+        padding: 10px;
+    }
+
+    row {
+        margin-top: 30px;
+    }
+
+    .tbl1 {
+        width:300px;
+        height:300px;
+        align-items:center;
+        border: 2px solid green;
+    }
+    .child {
+        width: 290px;
+        height: 290px;
+        margin:10px auto;
+       
+    }
+    th, td {
+        padding: 2px;
+    }
+
+    .cat {
+        margin-right: -100px;
+        height: 500px;
+        overflow: auto;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col col-4">
+            <div class="tbl1">
+                <div class="child">
+                    <form method="post" asp-controller="Category" asp-action="AddCategory">
+                        <center>  <h3>Add New Category</h3></center><br />
+
+                        <table>
+                            <tr>
+                                <th> Category </th>
+                                <th> <input type="text" asp-for="Category_name" /></th>
+
+                            </tr>
+                            <tr>
+                                <th> Description </th>
+                                <th> <textarea asp-for="Category_description" rows="5" cols="23" style="resize:none"></textarea></th>
+
+                            </tr>
+                            <tr>
+
+                                <td colspan="2" class="text-center"><input type="Submit" class="btn btn-success" value="Add" /></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col col-8  cat ">
+            <table class="table table-striped ">
+                <tr>
+                    <th>S.N</th>
+                    <th>Category ID</th>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+
+                </tr>
+                @{int i = 0; }
+                @foreach (var items in ViewBag.Category)
+                {
+                    i++;
+                    <tr>
+                        <td>
+                            @i
+                        </td>
+                        <td>
+                            @items.Category_id
+                        </td>
+                        <td>@items.Category_name</td>
+                        <td>@items.Category_description</td>
+                        <td >
+                            <div style="width:120px">
+                                <a class="btn-danger " style="border: 1px solid black;padding:4px; width:100px;cursor:pointer" asp-controller="Category" asp-action="Delete" asp-route-id="@items.Category_id" onclick="return confirm('Are you sure ?')">delete</a>
+                                <a class="btn-success" style="border: 1px solid black;padding:4px;width:100px;cursor:pointer" asp-controller="Category" asp-action="Update" asp-route-id="@items.Category_id">Update</a>
+                            </div>                     
+                        </td>
+
+                    </tr>
+                }
+
+            </table>
+
+        </div>
+
+
+    </div>
+</div>

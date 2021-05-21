@@ -1,0 +1,681 @@
+@*@inject bazargharnext.Controllers.CategoryController category*@
+@model bazargharnext.ModelsView.MyProductView
+@{ }
+<style>
+    .hide {
+        display: none;
+        width: 100%;
+        height: 500px;
+        overflow: auto;
+    }
+
+    .row {
+        margin: 10px;
+    }
+
+    /**/
+    /*the container must be positioned relative:*/
+    .autocomplete {
+        position: relative;
+        display: inline-block;
+    }
+
+    input {
+        border: 1px solid transparent;
+        /*background-color: #f1f1f1;*/
+        padding: 3px;
+        font-size: 16px;
+    }
+
+
+        input[type=submit] {
+            background-color: DodgerBlue;
+            color: #fff;
+            cursor: pointer;
+        }
+
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+    }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+            /*when hovering an item:*/
+            .autocomplete-items div:hover {
+                background-color: #e9e9e9;
+            }
+
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+    }
+
+    .addImages {
+        padding: 10px;
+        width: 350px;
+        height: 420px;
+        overflow: auto;
+    }
+
+    .thumbnail {
+        width: 150px;
+        height: 80px;
+        margin: 10px;
+    }
+
+    .addImages .result {
+        height: 360px;
+        overflow: auto;
+    }
+
+    .btnGroup {
+        padding: 20px 5px 5px 5px;
+        height: 40px;
+    }
+
+    .clear {
+        background: maroon;
+        padding: 3px;
+        color: whitesmoke;
+        width: 120px;
+        height: 30px;
+        border-radius: 10px;
+        margin-right: 10px;
+    }
+
+    .post {
+        background: #1c7430;
+        padding: 3px;
+        color: whitesmoke;
+        width: 120px;
+        height: 30px;
+        border-radius: 10px;
+    }
+
+    input[type=text] {
+        background-color: whitesmoke;
+        border: 2px solid DodgerBlue;
+        border-radius: 4px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        if (@ViewBag.isSuccess == True) {
+            var msg = "@ViewBag.Product_Id";
+
+                alert(" Product With Product Id "+msg+" Added Successfully... ");
+
+        }
+    });
+</script>
+
+
+<form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="AddProduct">
+    <div class="row">
+        <div class="col col-4  menu">
+            @**@
+            @if (ViewBag.IsSuccess == true)
+            {
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Congratulations</strong> You have added new Product successfully. <br />
+    Click <a asp-controller="Product" asp-action="GetProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>} @**@
+            <div class="text-center">
+                <h4>Choose your product type</h4>
+                <select id="select" asp-for="Category_id" class="form-control Category_id" asp-items="@(new SelectList(ViewBag.Category,"Category_id","Category_name"))">
+                </select>
+
+            </div>
+
+            <div class="addImages form-group">
+                <label asp-for="GalleryFiles" style="font-size: 10px">Uploade Images </label>
+                <input asp-for="GalleryFiles" id="fileupload" accept="image/*" />
+                <span asp-validation-for="GalleryFiles" class="text-danger"></span>
+                <br />
+                <div id="dvPreview">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col col-8 ">
+            <div class="hide" id="0">
+                <font size="30">
+                    <pre>
+    &lt------------  Please
+                  Select
+                  Category
+                  Here...
+
+</pre>
+                </font>
+
+
+            </div>
+
+            <div class="hide" id="2">
+
+                Mobile
+
+            </div>
+            <div class="hide" id="3">@*TV*@TV</div>
+            <div class="hide" id="4">@*MotorCycle*@MotorCycle</div>
+            <div class="hide" id="5">
+                @*Car*@
+                <table class="table">
+                    <tr>
+                        <td><span>Brand</span></td>
+                        <td>
+                            <div class="autocomplete" style="width:300px;">
+                                <input id="carBrands" type="text" name="carBrands" placeholder="Brands" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span>Model</span></td>
+                        <td>
+                            <div class="autocomplete" style="width:300px;">
+                                <input id="carModel" type="text" name="carModel" placeholder="Models" />
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span>Year</span></td>
+                        <td>
+                            <div class="autocomplete" style="width:300px;">
+                                <input id="year" type="text" name="carModel" placeholder="Year" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span>Engine type</span></td>
+                        <td>
+                            <div class="autocomplete" style="width:300px;">
+                                <select id="engineType">
+                                    <option value="Petrol">Petrol</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="Electronics">Electronics</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span>Other description</span></td>
+                        <td>
+                            <div class="autocomplete" style="width:300px;">
+                                <textarea id="description" placeholder="Your cars description here" cols="35" rows="7"></textarea>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+            <div class="hide" id="6">Laptop</div>
+            <div class="hide" id="7">Electronics</div>
+            <div class="hide" id="8">Furnitures</div>
+            <div class="hide" id="1">
+                @*Others*@
+
+                <table class="table" id="tbl" style="width: 100%;">
+
+                    <thead class="thead-default">
+                        <tr>
+                            <th style="width:40%">
+                                Title
+                            </th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label class="items">Product Name</label></td>
+                            <td>
+                                <input type="Text" class="items" id="Product_Name" asp-for="Product_name" />
+
+                                <span asp-validation-for="Product_name" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label class="items">Price</label></td>
+                            <td>
+                                <input type="Text" class="items" id="Price" asp-for="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label class="items">Description</label></td>
+                            <td>
+                                <textarea asp-for="Description" id="Description" class="items" style="resize:none" rows="3" cols="65"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table class="table" id="maintable">
+                                    <tbody>
+                                    
+                                    </tbody>
+                                </table>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <a class="btn btn-info" style="width:100px" id="addMore" data-toggle="modal" data-target="#exampleModal">Add more</a>
+                                You can insert more details by clicking here
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+            </div>
+
+
+
+            <div class="btnGroup text-center">
+                <button type="reset" class="clear">Clear</button>
+                <button type="submit" class="post" id="btnSubmit">Post</button>
+            </div>
+        </div>
+        @*end of col-8*@
+    </div>
+
+</form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+@*Div change : function to change the div element as select option onchange event *@
+<script>
+    $(document).ready(function () {
+        $("#select").on('change', function () {
+            $(".hide").hide();
+            $("#" + $(this).val()).fadeIn(700);
+        }).change();
+
+    });
+</script>
+@*Div change*@
+
+@*Autocomplete*@
+<script>
+    function autocomplete(inp, arr) {
+        /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+        let currentFocus;
+        /*execute a function when someone writes in the text field:*/
+        inp.addEventListener("input", function () {
+            let a, b, i, val = this.value;
+            /*close any already open lists of autocompleted values*/
+            closeAllLists();
+            if (!val) { return false; }
+            currentFocus = -1;
+            /*create a DIV element that will contain the items (values):*/
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            /*append the DIV element as a child of the autocomplete container:*/
+            this.parentNode.appendChild(a);
+            /*for each item in the array...*/
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function () {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        /*execute a function presses a key on the keyboard:*/
+        inp.addEventListener("keydown", function (e) {
+            let x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode === 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode === 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode === 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (let i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            const x = document.getElementsByClassName("autocomplete-items");
+            for (let i = 0; i < x.length; i++) {
+                if (elmnt !== x[i] && elmnt !== inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+
+
+        });
+    }
+
+    /*An array containing all the country names in the world:*/
+    const brands = ["Honda", "Mahindra", "Hyundai",
+        "Suzuki",
+        "Renault",
+        "Volkswagen",
+        "TATA",
+        "KIA",
+        "Jeep",
+        "Nissan",
+        "Toyota",
+        "Ford",
+        "Land Rover",
+        "Jaguar",
+        "BMW",
+        "Mercedes"];
+    const models = ["aaaaa", "aaaaaa", "cccccc", "bbbbbbb"];
+    /*initiate the autocomplete function on the "carBrands" element, and pass along the brands array as possible autocomplete values:*/
+    autocomplete(document.getElementById("carBrands"), brands);
+    autocomplete(document.getElementById("carModel"), models);
+
+</script>
+@*File preview *@
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $("#fileupload").change(function () {
+            if (typeof (FileReader) != "undefined") {
+                var dvPreview = $("#dvPreview");
+                dvPreview.html("");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                $($(this)[0].files).each(function () {
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var img = $("<img />");
+                            img.attr("style", "height:100px;width: 100px");
+                            img.attr("src", e.target.result);
+                            dvPreview.append(img);
+                        }
+                        reader.readAsDataURL(file[0]);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        dvPreview.html("");
+                        return false;
+                    }
+                });
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+        });
+    });
+</script>
+<style>
+    input[type="file"] {
+        display: block;
+    }
+
+    .imageThumb {
+        max-height: 75px;
+        border: 2px solid;
+        padding: 1px;
+        cursor: pointer;
+    }
+
+    #fileupload {
+        display: inline-block;
+        margin: 10px 10px 0 0;
+    }
+
+    .remove {
+        display: block;
+        background: #f25151;
+        border: 1px solid black;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+    }
+
+        .remove:hover {
+            background: white;
+            color: black;
+        }
+</style>
+
+
+
+@*//modal
+*@
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Product Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="title" class="col-form-label">Title:</label>
+                    <input type="text" class="form-control" id="mTitle" autofocus />
+                    <span class="error">Title required</span>
+                </div>
+                <div class="form-group">
+                    <label for="descr" class="col-form-label">Description:</label>
+                    <textarea class="form-control" id="mDescription"></textarea>
+                    <span class="error">Description required</span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="reset" id="rest" class="btn btn-secondary">Clear</button>
+                <button type="button" class="btn btn-primary" id="addMoreDetail" data-dismiss="modal" >Add</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*product script*@
+
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+
+
+    .close-icon {
+        border: 1px solid transparent;
+        background-color: transparent;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+        .close-icon:after {
+            content: "X";
+            display: block;
+            width: 24px;
+            height: 24px;
+            background-color: #FA9595;
+            border-radius: 5%;
+            text-align: center;
+            color: white;
+            font-weight: normal;
+            font-size: 16px;
+            box-shadow: 0 0 2px #E50F0F;
+            cursor: pointer;
+        }
+</style>
+
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(document).on("click", "#addMoreDetail", function () { //
+
+            var Title = $("#mTitle").val();
+
+            var Details = $("#mDescription").val();
+            var rowCount = $('.product-details-tr').length + 1;
+            var contactdiv = '<tr class="product-details-tr">' +
+                '<td width=40%><input type="text" name="txtTitle' + rowCount + '" class="form-control f-name01" value=' + Title + '></td>' +
+                '<td><input type="text" name="txtDetails' + rowCount + '" class="form-control l-name01" value=' + Details + '></td>' +
+                '<td><button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs" aria-label="Close"><span aria-hidden="true">&times;</span></button></td>' +
+                '</tr>';
+            $('#maintable').append(contactdiv); // Adding these controls to Main table class
+        });
+    });
+    $(document).on("click", ".deleteContact", function () {
+        $(this).closest("tr").remove(); // closest used to remove the respective 'tr' in which I have my controls
+    });
+
+
+    $(function click() {
+        $("#btnSubmit").click(function (e) {
+           
+            var product = getProduct();
+            var product_Details = getAllProductDetails();
+            var formData = new FormData();
+            var files = $('#fileupload').get(0).files;
+            console.log(files);
+            formData.append("Product_Name", product.Product_Name);
+            formData.append("Category_id", 1);
+            formData.append("Price", product.Price);
+            formData.append("Description", product.Description);
+            formData.append("Product_Details", JSON.stringify(product_Details));
+
+            for (i = 0; i < files.length; i++) {
+                formData.append("GalleryFiles", files[i]);
+            }
+            $.ajax({
+                type: "Post",
+                // url: "/AddProduct/Add" + "/?Product=" + JSON.stringify(product) + "&customers=" + JSON.stringify(customers) + "&Gallery=" + JSON.stringify(gallerys),
+                url: "/Product/AddProduct",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alert("Product Added Successfully");
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+                },
+                error: function (res) {
+                    alert(res.responseText);
+                }
+
+
+            });
+
+
+         
+        });
+    });
+
+    //data Collection from table
+    function getProduct() {
+        var product = { 'Product_Name': $("#Product_Name").val(), 'Price': $("#Price").val(), 'Description': $("#Description").val(),'Category_id':$(".Category_id").val() };
+        return product;
+    }
+ 
+
+
+    function getAllProductDetails() {
+        var data = [];
+        $('tr.product-details-tr').each(function () {
+            var Title = $(this).find('.f-name01').val();//Bind to the first name with class f-name01
+            var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01
+            var alldata = {
+                'Title': Title, //FName as per Employee class name in .cs
+                'Description': Details, //LName as per Employee class name in .cs
+
+            }
+            data.push(alldata);
+        });
+
+        return data;
+    }
+
+   
+
+</script>
+
+@**@

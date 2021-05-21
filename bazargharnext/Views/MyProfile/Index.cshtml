@@ -1,0 +1,404 @@
+@using Microsoft.AspNetCore.Http; 
+
+@model IEnumerable<bazargharnext.ModelsView.MyProductView>
+<style>
+    .profile{
+    margin-top: 25px;
+    margin-left: -30px;
+    padding: 10px 10px 0 10px;
+    
+    }
+    .detail-container {
+      margin-top: 25px;
+      margin-left: -30px;
+      padding-left: 10px;
+      white-space: nowrap;
+    }
+    
+    .item-row {
+      /* As wide as it needs to be */
+      height: 500px;
+      overflow: auto;
+    }
+    .card{
+    margin-bottom: 5px;
+    width: auto;
+    height: 500px;
+    
+    }
+    .productImage{
+    height: 499px;
+    width: auto;
+    padding: 10px;
+    }
+    .productImage .card{
+        border-style: solid;
+        margin-bottom: 5px;
+        width: 100%;
+        height: 180px;
+    position: relative;
+    }
+    .productImage .card .image{
+    width: 100%;
+    height: 180px;
+    }
+        .productImage .card .btn {
+            width: 20%;
+            position: absolute;
+            top: 7%;
+            left: 87%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            color: black;
+            font-size: 14px;
+            padding: 10px 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: antiquewhite;
+        }
+    .productImage .card .btn:hover{
+    background-color:#b1dfbb ;
+    }
+    
+    .description{
+        padding: 10px;
+    }
+    .description .update{
+                    
+                       color: blue;
+                       font-size: 16px;
+                       border: none;
+                       cursor: pointer;
+                       border-radius: 5px;
+                       
+                            padding: 5px;
+                     }
+    .description .delete{
+                         width: 30px;
+                        
+                           color: red;
+                           font-size: 16px;
+                            padding: 5px;
+                           border: none;
+                           cursor: pointer;
+                           border-radius: 5px;
+                         }
+                         
+    .description .update:hover{
+    
+    background-color:#b1dfbb ;
+    }
+    
+    .description .delete:hover{
+    
+    background-color:#b1dfbb ;
+    }
+                     
+    
+    .fixedButton{
+    z-index: 100;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50%;
+    
+      background-color: DodgerBlue; /* Blue background */
+      border: none; /* Remove borders */
+      color: white; /* White text */
+      font-size: 40px; /* Set a font size */
+      padding: 0 12px;
+      cursor: pointer; /* Mouse pointer on hover */
+    }
+    .fixedButton:hover{
+    color: antiquewhite;
+    background: #0062cc;
+    }
+    .fixedButton .toolTipText {
+    font-size: 16px;
+                   visibility: hidden;
+                   width: 120px;
+                   background-color: black;
+                   color: #fff;
+                   text-align: center;
+                   border-radius: 6px;
+                   padding: 5px 0;
+                 
+                   /* Position the tooltip */
+                   position: absolute;
+                     right: 105%; 
+                   z-index: 1;
+                 }
+    .fixedButton:hover .toolTipText {
+  visibility: visible;
+     }
+    /*Image hover preview*/
+    .thumbnail {
+      position: relative;
+      width: 100%;
+      z-index: 0;
+
+    }
+    
+    .thumbnail:hover {
+      background-color: transparent;
+      z-index: 50;
+    }
+      
+           
+    
+    .thumbnail span {
+      /*CSS for enlarged image*/
+      width: 500px;
+      height: 400px;
+      margin: auto;
+      position: absolute;
+      background-color: whitesmoke;
+      padding: 5px;
+      left: -1000px;
+      border: 1px dashed gray;
+      visibility: hidden;
+      color: black;
+      text-decoration: none;
+    }
+    
+    .thumbnail span img {
+      /*CSS for enlarged image*/
+      border-width: 0;
+     width:100%;
+     height:100%;
+      padding: 2px;
+      
+    }
+    
+    .thumbnail:hover span {
+      /*CSS for enlarged image on hover*/
+      visibility: visible;
+
+      top: 0;
+      left: 200px; /*position where enlarged image should offset horizontally */
+    }
+    /*image hover preview end*/
+    
+
+</style>
+<a class="fixedButton" asp-controller="Product" asp-action="AddProduct">
+    <i class="fa fa-plus-circle"></i>
+    <span class="toolTipText">Add item</span>
+</a>
+
+<div class="row">
+    <div class="col-4 ">
+        <div class="profile  border">
+            @{
+                User users = ViewBag.MyProfile;  
+                }
+             
+            <div class="text-center align-content-center">
+                <div>
+                    <img src="~/images/profile/@users.Photo" style="width:90px;height:90px;" alt="avatar" class="rounded-circle img-responsive">
+                </div>
+                <div>
+                    <label>@users.Username</label>
+                    <a asp-controller="MyProfile" asp-action="UpdateProfile" title="Update Profile"><img src="icons/edit.png" width="20" height="20" alt="" /> </a>
+                </div>
+            </div>
+
+            <Table class="border table table-striped">
+
+
+                <tr>
+                    <td>
+                        <label>Email :</label>
+                    </td>
+                    <td>
+                        <label> @users.Email </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Mobile :</label>
+                    </td>
+                    <td>
+                        <label> @users.Contact </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Gender :</label>
+                    </td>
+                    <td>
+                        <label>@users.Gender </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Address :</label>
+                    </td>
+                    <td>
+                        <label> @users.Address </label>
+                    </td>
+                </tr>
+
+            </Table>
+            
+        </div>
+            
+
+    </div>
+    <div class="col-8">
+        <div class="detail-container">
+            <div class="text-center">My Product</div>
+            <div class="item-row">
+                @foreach (var product in ViewBag.Product)
+                {
+
+
+
+<div class="card">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="productImage">
+                            @if (product.Gallery.Count > 0)
+                            {
+
+                                for (int i = 0; i < product.Gallery.Count; i++)
+                                {
+                            <div class="card">
+                                <a class="thumbnail" href="">
+                                    <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" /><span><img src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" width="100" height="100" /></span>
+                                </a>
+                                <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Gallery[i].Id"><i class="fa fa-camera"></i></a>
+
+                            </div>
+                                }
+                            }
+                            else { 
+                        <div class="card">
+                            <a class="thumbnail" href="">
+                                <img class="image" src="~/images/products/noimages.png" alt="No Images" />
+                            </a>
+                           @* <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Product_Id"><i class="fa fa-camera"></i></a>
+*@
+                        </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="description">
+                            <div class="table">
+                                <table class="table-bordered table-striped">
+
+
+                                    <tr>
+                                        <td>
+                                            Product ID
+                                        </td>
+                                        <td style="padding: 0 10px ">
+                                            <div class="row">
+                                                <label class="col col-8">@product.Product_Id</label>
+                                                <a class="update col col-2 text-center" title="Update Details" asp-controller="AddProduct" asp-action="Update" asp-route-id="@product.Product_Id"><i class="fa fa-refresh"  ></i></a>
+                                                <a class="delete col col-2" title="Delete Products" onclick="delete_Product(@product.Product_Id)" ><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%">
+                                            Product name:
+                                        </td>
+                                        <td>
+                                            @product.Product_name
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%">
+                                            Category:
+                                        </td>
+                                        <td>
+                                            
+                                            @product.Category_name
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 30%">
+                                            Issue date:
+                                        </td>
+                                        <td>
+                                            @product.Date
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Price
+                                        </td>
+                                        <td>
+                                            @product.Price
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Description
+
+                                        </td>
+                                        <td>
+                                            @product.Description
+                                        </td>
+                                    </tr>
+                                   @foreach (var details in product.Product_Details) { 
+                                   <tr>
+                                       <td>@details.Title</td>
+                                       <td>@details.Description</td> 
+
+                                   </tr>
+                                   }
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>}
+<div>
+        </div>
+               
+
+    </div>
+</div>
+        </div>
+</div>
+<script>
+    function delete_Product(id) {
+        alert("product id = " + id);
+    }
+    function update_Product(id) {
+        alert("product id = " + id);
+
+     @*   $.ajax({
+            type: "Post",
+            url: "/AddProduct/Update",
+            data: { 'Id': id },
+            dataType:'json',
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert(data);
+            },
+            failure: function (res) {
+                alert(res.responseText);
+            },
+            error: function (res) {
+                alert(res.responseText);
+            }
+
+
+        });*@
+
+    }
+
+
+</script>

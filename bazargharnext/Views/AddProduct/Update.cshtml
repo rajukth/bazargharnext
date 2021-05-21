@@ -1,0 +1,82 @@
+﻿@model bazargharnext.ModelsView.MyProductView
+@using bazargharnext.ModelsView 
+@{
+
+    MyProductView myProductView = ViewBag.Data;
+
+}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+<form method="post" class="justify-content-center">
+    <table id="mainTable">
+        <thead>
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Description
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Product Name
+                </td>
+                <td>
+                    <input type="text" asp-for="@myProductView.Product_name" id="Product_name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Price
+                </td>
+                <td>
+                    <input type="text" asp-for="@myProductView.Price" id="Price">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Description
+                </td>
+                <td>
+                    <input type="text" asp-for="@myProductView.Description" id="Description">
+                </td>
+            </tr>
+            @if (myProductView.Product_Details.Count > 0)
+            {
+                for (int i = 0; i < myProductView.Product_Details.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input type="text" asp-for="@myProductView.Product_Details[i].Title" id="Title[i]">
+                        </td>
+                        <td>
+                            <input type="text" asp-for="@myProductView.Product_Details[i].Description" id="Details[i]">
+                        </td>
+
+                        <td><button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs" aria-label="Close"><span aria-hidden="true">&times;</span></button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    <div class="btnGroup text-center">
+                        <button class="clear">Cancel</button>
+                        <button type="submit" class="post" id="btnSubmit">Update</button>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+
+
+</form>
+

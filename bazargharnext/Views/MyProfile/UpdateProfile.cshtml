@@ -1,0 +1,254 @@
+@model bazargharnext.ModelsView.MyProfileView
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+
+    <style>
+        .profile {
+            align-content: center;
+            width: 50%;
+            margin: auto;
+            padding: 10px 10px 0 10px;
+        }
+
+        .center {
+            margin: auto;
+            padding: 5px;
+        }
+
+        .btn {
+            margin: auto;
+            width: 100px;
+        }
+
+        .update {
+            background: #0062cc;
+            color: whitesmoke;
+        }
+
+        .clear {
+            background: #b1dfbb;
+            color: #2a2730;
+        }
+
+        .update:hover {
+            background: #1c7430;
+        }
+
+        .clear:hover {
+            background: #7a43b6;
+            color: #b1dfbb;
+        }
+
+        .image {
+            width: 200px;
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .form-input > input {
+            padding-left: 80%;
+            display: none;
+        }
+
+        input#file {
+            display: inline-block;
+            width: 100%;
+            padding: 120px 0 0 0;
+            height: 100px;
+            overflow: hidden;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: url('https://cdn1.iconfinder.com/data/icons/hawcons/32/698394-icon-130-cloud-upload-512.png') center center no-repeat #e4e4e4;
+            border-radius: 20px;
+            background-size: 60px 60px;
+        }
+    </style>
+
+    @{ User users = ViewBag.MyProfile; }
+    <form method="post" asp-controller="MyProfile" asp-action="Update" enctype="multipart/form-data" >
+        <div class="profile border">
+            <div class="text-center align-content-center">
+                <div class="form-group">
+                    <label for="file-ip-1" class="image">
+                        <img src="~/images/profile/@users.Photo" title="Upload Image" id="file-ip-1-preview"  style="width:110px;height:110px;" alt="avatar" class="rounded-circle border img-responsive">
+                    </label>
+                    <input asp-for="Photo" id="file-ip-1" accept="image/*" class="fa fa-camera" style="display:none" onchange="showPreviewOne(event);">
+                  </div>
+
+               
+            </div>
+            <div class="center">
+                <Table class="border table table-striped">
+                   <tr>
+                       <td>
+                           <label asp-for="Username">Username</label>
+                       </td>
+                       <td>
+                           <input type="text" asp-for="Username" value="@users.Username" required/>
+                       </td>
+
+                   </tr>
+                    <tr>
+                        <td>
+                            <label>Email :</label>
+                        </td>
+                        <td>
+                            <input type="text" value="@users.Email" asp-for="Email" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Mobile :</label>
+                        </td>
+                        <td>
+                            <input type="text" value="@users.Contact" asp-for="Contact" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Gender :</label>
+                        </td>
+                        <td>
+                            <input type="radio" id="male" asp-for="Gender" value="Male" checked="@ViewBag.Male" />Male
+                            <input type="radio" id="female" asp-for="Gender" value="Female" checked="@ViewBag.Female" />Female
+
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Address :</label>
+                        </td>
+                        <td>
+                            <textarea rows="3" size=auto name="Address" required>@users.Address</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <a href="" data-target="#changePsw" data-toggle="modal"> Change Password </a>
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            <button type="submit" class="btn update" title="Update" >Update</button>
+                            <button class="btn clear" title="Cancel" onclick="goBack()">Cancel</button>
+
+
+                        </td>
+                    </tr>
+
+                </Table>
+            </div>
+
+
+        </div>
+    </form>
+
+
+    <div id="changePsw" class="modal fade">
+        <div class="modal-dialog modal-login">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Change Password</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="form-group">
+                            <input type="Password" name="oldPassword" id="oldPassword" class="form-control" placeholder="Old Password" required="required">
+                            <span id="ErrorMsg"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="newPassword" id="newPassword" class="form-control" onkeyup="check();" placeholder="New Password" required="required">
+
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="confirmPassword" onkeyup="check();" class="form-control" placeholder="Confirm New Password" required="required">
+                            <i id="message" class="match fa fa-check-circle"></i>
+                        </div>
+                        <div class="form-group modal-header">
+                            <Button asp-controller="Register" asp-action="ChangePassword" class="btn btn-primary btn-lg btn-block login-btn " id="change" disabled="disabled">Change</Button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @*//password confirm*@
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+
+        var msg = "@TempData["UpdateMsg"]";
+        //Check the condition if its not empty
+        if (msg != "") {
+            if (msg == 'error') {
+                $("#ErrorMsg").css('color', 'red');
+                $("#ErrorMsg").text("Error : Password Doesn't Matched ! ");
+                $('#changePsw').modal('show');
+            } else {
+                alert("Password Updated Successfully !");
+            }
+
+        }
+
+        //image upload
+        var msg = "@TempData["PhotoUpload"]";
+        //Check the condition if its not empty
+        if (msg != "") {
+            alert("Profile Updated Successfully !");
+        }
+
+    });
+
+
+
+</script>
+
+    <script type="text/javascript">
+
+        var check = function () {
+            if (document.getElementById('newPassword').value ==
+                document.getElementById('confirmPassword').value) {
+                document.getElementById('message').style.color = 'green';
+
+                document.getElementById("change").disabled = false;
+
+            } else {
+                document.getElementById('message').style.color = 'red';
+                document.getElementById("change").disabled = true;
+
+            }
+        }
+    </script>
+
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+        function showPreviewOne(event) {
+            if (event.target.files.length > 0) {
+                let src = URL.createObjectURL(event.target.files[0]);
+                let preview = document.getElementById("file-ip-1-preview");
+                preview.src = src;
+                preview.style.display = "block";
+               
+
+
+            }
+
+        }
+        
+
+    </script>

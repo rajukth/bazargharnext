@@ -1,0 +1,209 @@
+﻿@{ ViewData["Title"] = "Home Page"; 
+    
+    
+    
+    
+    }
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/style.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<style>
+    /*---- Custom CSS ----*/
+    .search-box {
+        margin: 0px;
+    }
+
+        .search-box .btn-light {
+            margin: 0px;
+            border: 1px solid #ced4da;
+        }
+
+    .range {
+        margin: 0px;
+    }
+
+    .low {
+        margin: 0px;
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+    .high {
+        margin: 0px;
+        padding-left: 3px;
+    }
+
+    input:invalid {
+        border: 3px solid #ff0000;
+    }
+
+    .mySlides {
+        display: none;
+    }
+    .product-grid {
+        margin-bottom:8px;
+   background:#c2acde;
+   border:4px solid white;
+   border-radius:5px;
+    }
+    .image {
+    margin-bottom: 20px;
+    }
+</style>
+<form action="">
+    <div class="row" style="margin-top: -47px;width: 100%;  background-color: #c2acde;">
+        <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6" style="margin: 0px;">
+            <div class="search-box col">
+
+                <div class="input-group ">
+                    <div class="input-group-prepend">
+                        <a style="width:60px; margin:0px" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Motorbike</a>
+                            <a class="dropdown-item" href="#">Car</a>
+                            <a class="dropdown-item" href="#">Computer</a>
+                            <a class="dropdown-item" href="#">Electroniocs</a>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search product here..">
+                    <div class="input-group-append">
+                        <a class="btn btn-success" style="width:80px; margin:0px">Search</a>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6">
+            <div class="col range">
+                <div class="row">
+                    <font style="margin:8px 0px 0px 16px " align=center size=3>Price:</font>
+                    <div class="col-4 low"><input type="text" class="form-control" placeholder="Minimum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+                    <font align=center size=5>~</font>
+                    <div class="col-5 high"><input type="text" class="form-control" placeholder="Maximum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 product-grid  product_color">
+            <div class="image w3-content w3-section " >
+                <a asp-controller="Product" asp-action="ViewProduct">
+
+                    <img class="mySlides" src="~/images/apple-watch.jpg" style="width:100%">
+                    <img class="mySlides" src="~/images/beat.jpg" style="width:100%">
+                    <img class="mySlides" src="~/images/imac.jpg" style="width:100%">
+
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Beats Solo 3 Wireless</h6>
+            <h6 class="text-center">Price: $159.00</h6>
+
+        </div>
+
+        <div class="col-md-3 product-grid ">
+            <div class="image">
+                <a href="#">
+                    <img src="~/images/beat.jpg" class="w-100">
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Beats Solo 3 Wireless</h6>
+            <h6 class="text-center">Price: $159.00</h6>
+
+        </div>
+        <!-- ./Product -->
+        <!-- Product  -->
+        <div class="col-md-3 product-grid">
+            <div class="image">
+                <a href="#">
+                    <img src="~/images/imac.jpg" class="w-100">
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Apple iMac</h6>
+            <h6 class="text-center">Price: $1,699.00</h6>
+
+        </div>
+        <!-- ./Product -->
+        <!-- Product  -->
+        <div class="col-md-3 product-grid">
+            <div class="image">
+                <a href="#">
+                    <img src="~/images/ipad.jpg" class="w-100">
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Apple iPad</h6>
+            <h6 class="text-center">Price: $415.99</h6>
+          
+        </div>
+        <!-- ./Product -->
+        <!-- Product  -->
+        <div class="col-md-3 product-grid">
+            <div class="image">
+                <a href="#">
+                    <img src="~/images/iphone.jpg" class="w-100">
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Apple iPhone X</h6>
+            <h6 class="text-center">Price: $1,342.00</h6>
+           
+        </div>
+        <!-- ./Product -->
+        <!-- Product  -->
+        <div class="col-md-3 product-grid">
+            <div class="image">
+                <a href="#">
+                    <img src="~/images/macbook.jpg" class="w-100">
+                    <div class="overlay">
+                        <div class="detail">View Details</div>
+                    </div>
+                </a>
+            </div>
+            <h6 class="text-center">Apple MacBook</h6>
+            <h6 class="text-center">Price: $2,699.00</h6>
+        </div>
+        <!-- ./Product -->
+
+    </div>
+
+</div>
+<script>
+    var myIndex = 0;
+    carousel();
+
+    function carousel() {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        myIndex++;
+        if (myIndex > x.length) { myIndex = 1 }
+        x[myIndex - 1].style.display = "block";
+        setTimeout(carousel, 2000); // Change image every 2 seconds
+    }
+</script>
