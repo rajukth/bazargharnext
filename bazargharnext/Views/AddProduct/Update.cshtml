@@ -5,10 +5,105 @@
     MyProductView myProductView = ViewBag.Data;
 
 }
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+@*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "#addMore", function () { //
+            var rowCount = $('.product-details-tr').length + 1;
+            var contactdiv = '<tr class="product-details-tr">' +
+                '<td><input type="text" name="txtTitle' + rowCount + '" class="form-control f-name01" /></td>' +
+                '<td><input type="text" name="txtDetails' + rowCount + '" class="form-control l-name01" /></td>' +
+                '<td><button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs">X</button></td>' +
+                '</tr>' +
+                '<tr>'+
+                '<td colspan = "3" > <button type="button" id="addMore" class="addMore">Add More</button></td>' +
+                '</tr>';
+            $('#mainTable').append(contactdiv); // Adding these controls to Main table class
+        });
+    });
+    $(document).on("click", ".deleteContact", function () {
+        $(this).closest("tr").remove(); // closest used to remove the respective 'tr' in which I have my controls
+    });
+    $(document).on("click", ".addMore", function () {
+        $(this).closest("tr").remove(); // closest used to remove the respective 'tr' in which I have my controls
+    });
+
+    $(function click() {
+        $("#btnSubmit").click(function (e) {
+
+            var product = getProduct();
+            var product_Details = getAllProductDetails();
+            var formData = new FormData();
+           // var files = $('#fileupload').get(0).files;
+            
+            formData.append("Product_Name", product.Product_Name);
+            formData.append("Category_id", product.Category_id);
+            formData.append("Price", product.Price);
+            formData.append("Description", product.Description);
+            formData.append("Product_Details", JSON.stringify(product_Details));
+
+           @* for (i = 0; i < files.length; i++) {
+                formData.append("GalleryFiles", files[i]);
+            }*@
+            console.log(product);
+            console.log(product_Details);
+            console.log(formData);
+            
+            $.ajax({
+                type: "Post",
+                // url: "/AddProduct/Add" + "/?Product=" + JSON.stringify(product) + "&customers=" + JSON.stringify(customers) + "&Gallery=" + JSON.stringify(gallerys),
+                url: "/AddProduct/Update",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alert("Product Added Successfully");
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+                },
+                error: function (res) {
+                    alert(res.responseText);
+                }
 
 
-<form method="post" class="justify-content-center">
+            });
+
+
+
+        });
+    });
+
+    //data Collection from table
+    function getProduct() {
+        var product = { 'Product_Name': $("#Product_Name").val(), 'Price': $("#Price").val(), 'Description': $("#Description").val(), 'Category_id': $(".Category_id").val() };
+        return product;
+    }
+
+
+
+    function getAllProductDetails() {
+        var data = [];
+        $('tr.product-details-tr').each(function () {
+            var Title = $(this).find('.f-name01').val();//Bind to the first name with class f-name01
+            var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01
+            var alldata = {
+                'Title': Title, //FName as per Employee class name in .cs
+                'Description': Details, //LName as per Employee class name in .cs
+
+            }
+            data.push(alldata);
+        });
+
+        return data;
+    }
+
+</script>
+
+<form method="post" asp-controller="AddProduct" asp-action="Update" class="justify-content-center text-center" enctype="multipart/form-data">
     <table id="mainTable">
         <thead>
             <tr>
@@ -27,7 +122,16 @@
                     Product Name
                 </td>
                 <td>
-                    <input type="text" asp-for="@myProductView.Product_name" id="Product_name">
+                    <input type="text" value="@myProductView.Product_name" id="Product_Name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Category Name
+                </td>
+                <td>
+                    <input type="text" class="Category_id" value="@myProductView.Category_id" hidden>
+                    <input type="text" value="@myProductView.Category_name" id="Category_name">
                 </td>
             </tr>
             <tr>
@@ -35,7 +139,7 @@
                     Price
                 </td>
                 <td>
-                    <input type="text" asp-for="@myProductView.Price" id="Price">
+                    <input type="text" value="@myProductView.Price" id="Price">
                 </td>
             </tr>
             <tr>
@@ -43,24 +147,29 @@
                     Description
                 </td>
                 <td>
-                    <input type="text" asp-for="@myProductView.Description" id="Description">
+                    <textarea id="Description">@myProductView.Description</textarea>
                 </td>
             </tr>
-            @if (myProductView.Product_Details.Count > 0)
+            @if (myProductView.Product_Details!=null && myProductView.Product_Details.Count > 0)
             {
                 for (int i = 0; i < myProductView.Product_Details.Count; i++)
                 {
-                    <tr>
+                    <tr class="product-details-tr">
                         <td>
-                            <input type="text" asp-for="@myProductView.Product_Details[i].Title" id="Title[i]">
+                            <input type="text" class="f-name01" value="@myProductView.Product_Details[i].Title" id="Title[i]">
                         </td>
                         <td>
-                            <input type="text" asp-for="@myProductView.Product_Details[i].Description" id="Details[i]">
+                            <input type="text" class="l-name01" value="@myProductView.Product_Details[i].Description" id="Details[i]">
                         </td>
 
-                        <td><button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs" aria-label="Close"><span aria-hidden="true">&times;</span></button></td>
+                        <td><button type="button" id="btnDelete" class="text-center deleteContact btn btn btn-danger btn-xs" aria-label="Close"><span aria-hidden="true">&times;</span></button></td>
                     </tr>
                 }
+                <tr><td colspan="3"><button type="button" id="addMore" class="addMore">Add More</button></td></tr>
+            }
+            else
+            {
+                <tr><td colspan="3"><button type="button" id="addMore" class="addMore">Add More</button></td></tr>
             }
         </tbody>
         <tfoot>
@@ -68,7 +177,7 @@
                 <td colspan="3">
                     <div class="btnGroup text-center">
                         <button class="clear">Cancel</button>
-                        <button type="submit" class="post" id="btnSubmit">Update</button>
+                        <button class="post" id="btnSubmit">Update</button>
                     </div>
                 </td>
             </tr>

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using bazargharnext.AllFunction;
 
 namespace bazargharnext.Controllers
 {
@@ -19,6 +20,8 @@ namespace bazargharnext.Controllers
     {
         private readonly IWebHostEnvironment webHostEnvironment;
         private DataContext _dal=new DataContext();
+        GetAllProductsByUserId getAllProductsByUserId = new GetAllProductsByUserId();
+
         User user;
         public MyProfileController( IWebHostEnvironment hostEnvironment)
         {
@@ -31,7 +34,7 @@ namespace bazargharnext.Controllers
             user = JsonConvert.DeserializeObject<User>(value: HttpContext.Session.GetString("User"));
             ViewBag.MyProfile = user;
 
-            var data = GetProductByUserId(user.Userid);
+            var data = getAllProductsByUserId.GetProductByUserId(user.Userid);
             ViewBag.Product = data;        
 
             return Task.FromResult(View());
@@ -113,6 +116,8 @@ namespace bazargharnext.Controllers
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using var fileStream = new FileStream(filePath, FileMode.Create);
                 model.Photo.CopyTo(fileStream);
+               
+                //removing from folder
                 string oldPath = Path.Combine(uploadsFolder, oldFileName);
                 if (System.IO.File.Exists(oldPath))
                 {
@@ -124,32 +129,7 @@ namespace bazargharnext.Controllers
         }
 
         //repo
-        public IEnumerable<MyProductView> GetProductByUserId(int id)
-        {
-            return _dal.Products.Where(x => x.Userid == id).Select(product => new MyProductView()
-            {
-                Product_Id = product.Product_Id,
-                Product_name = product.Product_name,
-                Price = product.Price,
-                Category_id = product.Category_id,
-                Category_name = _dal.Category.Where(x => x.Category_id == product.Category_id).First().Category_name,
-                Date = product.Date,
-                Description = product.Description,
-                Gallery = product.GalleryModel.Select(g => new GalleryModel()
-                {
-                    Id = g.Id,
-                    Name = g.Name,
-                    URL = g.URL
-                }).ToList(),
-                Product_Details = product.Product_Details.Select(p => new Product_Details() {
-                    Id=p.Id,
-                    Title=p.Title,
-                    Description=p.Description
-                }).ToList()
-
-            }).ToList();
-
-        }
+        
         //
 
 

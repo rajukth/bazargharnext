@@ -1,8 +1,11 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model bazargharnext.ModelsView.MyProductView
+@using bazargharnext.ModelsView
 @{
+
+    MyProductView myProductView = ViewBag.Products;
+
 }
+
 <style>
     .container {
         margin-top: 1px;
@@ -41,18 +44,18 @@
     }
     .title {
         height: 100px;
-        
+
         margin-bottom: 10px;
         padding: 0;
     }
 
     @*//rating*@
-    
+
     .rate {
         float: left;
         height: 30px;
         padding: 0 10px;
-      
+
     }
 
         .rate:not(:checked) > input {
@@ -108,9 +111,11 @@
 <div class="container">
     <div class="row">
         <div class="col col-5">
-
+            <div style="float:right">
+                <font size=40>@myProductView.Product_name</font>
+            </div><br>
             <div class="title">
-                <font size=40>Product Name</font>
+
                 <div class="rate">
                     <input type="radio" id="star5" name="rate" value="5" />
                     <label for="star5" title="text">5 stars</label>
@@ -122,30 +127,46 @@
                     <label for="star2" title="text">2 stars</label>
                     <input type="radio" id="star1" name="rate" value="1" />
                     <label for="star1" title="text">1 star</label>
-                   
+
                 </div>
                 <div> Rate Product</div>
-                    
-               
+
+
             </div>
 
-            <div id="custCarousel" class="carousel slide" data-ride="carousel" align="center">
-                <!-- slides -->
-                <div class="carousel-inner">
-                    <div class="carousel-item active"> <img src="https://i.imgur.com/weXVL8M.jpg" alt="Hills"> </div>
-                    <div class="carousel-item"> <img src="https://i.imgur.com/Rpxx6wU.jpg" alt="Hills"> </div>
-                    <div class="carousel-item"> <img src="https://i.imgur.com/83fandJ.jpg" alt="Hills"> </div>
-                    <div class="carousel-item"> <img src="https://i.imgur.com/JiQ9Ppv.jpg" alt="Hills"> </div>
-                </div> <!-- Left right --> <a class="carousel-control-prev" href="#custCarousel" data-slide="prev"> <span class="carousel-control-prev-icon"></span> </a> <a class="carousel-control-next" href="#custCarousel" data-slide="next"> <span class="carousel-control-next-icon"></span> </a> <!-- Thumbnails -->
-                <ol class="carousel-indicators list-inline">
-                    <li class="list-inline-item active"> <a id="carousel-selector-0" class="selected" data-slide-to="0" data-target="#custCarousel"> <img src="https://i.imgur.com/weXVL8M.jpg" class="img-fluid"> </a> </li>
-                    <li class="list-inline-item"> <a id="carousel-selector-1" data-slide-to="1" data-target="#custCarousel"> <img src="https://i.imgur.com/Rpxx6wU.jpg" class="img-fluid"> </a> </li>
-                    <li class="list-inline-item"> <a id="carousel-selector-2" data-slide-to="2" data-target="#custCarousel"> <img src="https://i.imgur.com/83fandJ.jpg" class="img-fluid"> </a> </li>
-                    <li class="list-inline-item"> <a id="carousel-selector-2" data-slide-to="3" data-target="#custCarousel"> <img src="https://i.imgur.com/JiQ9Ppv.jpg" class="img-fluid"> </a> </li>
-                </ol>
-            </div>
+            @if (myProductView.Gallery != null && myProductView.Gallery.Count > 0)
+            {
+                for (int i = 0; i < myProductView.Gallery.Count; i++)
+                {
+                    <div id="custCarousel" class="carousel slide" data-ride="carousel" align="center">
+                        <!-- slides -->
+                        <div class="carousel-inner">
+                            <div class="carousel-item active"> <img src="@myProductView.Gallery[i].URL" alt="@myProductView.Gallery[i].Name"> </div>
+                        </div>
+                        <!-- Left right --> <a class="carousel-control-prev" href="#custCarousel" data-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </a> <a class="carousel-control-next" href="#custCarousel" data-slide="next"> <span class="carousel-control-next-icon"></span> </a> <!-- Thumbnails -->
+                        <ol class="carousel-indicators list-inline">
+                            <li class="list-inline-item active"> <a id="carousel-selector-@i" class="selected" data-slide-to="@i" data-target="#custCarousel"> <img src="@myProductView.Gallery[i].URL" class="img-fluid"> </a> </li>
+
+
+                            @*<li class="list-inline-item"> <a id="carousel-selector-1" data-slide-to="1" data-target="#custCarousel"> <img src="https://i.imgur.com/Rpxx6wU.jpg" class="img-fluid"> </a> </li>
+                        <li class="list-inline-item"> <a id="carousel-selector-2" data-slide-to="2" data-target="#custCarousel"> <img src="https://i.imgur.com/83fandJ.jpg" class="img-fluid"> </a> </li>
+                        <li class="list-inline-item"> <a id="carousel-selector-3" data-slide-to="3" data-target="#custCarousel"> <img src="https://i.imgur.com/JiQ9Ppv.jpg" class="img-fluid"> </a> </li>
+                            *@
+                        </ol>
+                    </div>
+                }
+
+            }
+            else
+            {
+                <img class="image" src="~/images/products/noimages.png" alt="No Images" />
+            }
+
         </div>
-        <div class="col col-7 justify-content-center description" >
+
+        <div class="col col-7 justify-content-center description">
 
             <table class="table-striped  " width="100%">
                 <tr>
@@ -153,16 +174,53 @@
                     <th class="thead-dark" width="60%">Description</th>
 
                 </tr>
-                @for (int i = 0; i < 20; i++) { 
+                <tr>
+                    <td>
+                        Name :
+                    </td>
+                    <td>
+                        @myProductView.Product_name
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Category :
+                    </td>
+
+                    <td>
+                        @myProductView.Category_name
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Price :
+                    </td>
+
+                    <td>
+                        @myProductView.Price
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Description :
+                    </td>
+                    <td>
+                        @myProductView.Description
+                    </td>
+                </tr>
+                @if (myProductView.Product_Details!=null && myProductView.Product_Details.Count>0) {
+                    foreach (var detail in myProductView.Product_Details) { 
             <tr>
                 <td>
-                    Name :
+                    @detail.Title
                 </td>
                 <td>
-                    My product
+                    @detail.Description
                 </td>
-            </tr>
+            </tr>    
+                    }
                 }
+
             </table>
 
 

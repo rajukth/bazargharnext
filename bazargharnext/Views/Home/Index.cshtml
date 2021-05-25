@@ -1,9 +1,10 @@
-﻿@{ ViewData["Title"] = "Home Page"; 
-    
-    
-    
-    
-    }
+﻿@{ ViewData["Title"] = "Home Page";
+}
+@using bazargharnext.ModelsView;
+@{
+    IEnumerable<MyProductView> myProductView = ViewBag.Products;
+
+}
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="~/css/style.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -43,14 +44,16 @@
     .mySlides {
         display: none;
     }
+
     .product-grid {
-        margin-bottom:8px;
-   background:#c2acde;
-   border:4px solid white;
-   border-radius:5px;
+        margin-bottom: 8px;
+        background: #c2acde;
+        border: 4px solid white;
+        border-radius: 5px;
     }
+
     .image {
-    margin-bottom: 20px;
+        margin-bottom: 20px;
     }
 </style>
 <form action="">
@@ -97,7 +100,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3 product-grid  product_color">
-            <div class="image w3-content w3-section " >
+            <div class="image w3-content w3-section w-100 h-50 ">
                 <a asp-controller="Product" asp-action="ViewProduct">
 
                     <img class="mySlides" src="~/images/apple-watch.jpg" style="width:100%">
@@ -113,20 +116,32 @@
             <h6 class="text-center">Price: $159.00</h6>
 
         </div>
+        @foreach (var Products in myProductView)
+        {
 
-        <div class="col-md-3 product-grid ">
-            <div class="image">
-                <a href="#">
-                    <img src="~/images/beat.jpg" class="w-100">
+
+
+
+<div class="col-md-3 product-grid ">
+        <div class="image">
+            <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@Products.Product_Id">
+                @if (Products.Gallery.Count > 0)
+                {
+                <img src="@Products.Gallery[0].URL" alt="@Products.Gallery[0].Name" class="w-100 h-50">
+                }
+                else { 
+            <img class="w-100 h-50" src="~/images/products/noimages.png" alt="No Images"  />
+                }
                     <div class="overlay">
-                        <div class="detail">View Details</div>
-                    </div>
-                </a>
-            </div>
-            <h6 class="text-center">Beats Solo 3 Wireless</h6>
-            <h6 class="text-center">Price: $159.00</h6>
-
+                    <div class="detail">View Details</div>
+                </div>
+            </a>
         </div>
+        <h6 class="text-center">@Products.Product_name</h6>
+        <h6 class="text-center">rs. @Products.Price</h6>
+
+    </div>}
+
         <!-- ./Product -->
         <!-- Product  -->
         <div class="col-md-3 product-grid">
@@ -155,7 +170,7 @@
             </div>
             <h6 class="text-center">Apple iPad</h6>
             <h6 class="text-center">Price: $415.99</h6>
-          
+
         </div>
         <!-- ./Product -->
         <!-- Product  -->
@@ -170,7 +185,7 @@
             </div>
             <h6 class="text-center">Apple iPhone X</h6>
             <h6 class="text-center">Price: $1,342.00</h6>
-           
+
         </div>
         <!-- ./Product -->
         <!-- Product  -->

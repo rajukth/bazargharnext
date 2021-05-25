@@ -85,58 +85,10 @@
         return data;
     }
 
-    function getImage() {
-        
-        var fileUpload = document.getElementById("fileUpload");
-        var files = fileUpload.files;
-        var formData = new FormData();
-        var a = [];
-
-        for (var i = 0; i < files.length; i++) {
-            var name = files[i].name;
-            formData.append(name, files[i]);
-            var b = {
-                'lastModified': files[i].lastModified,
-                'lastModifiedDate': files[i].lastModifiedDate,
-                'name': files[i].name,
-                'size': files[i].size,
-                'type': files[i].type
-            };
-            a.push(JSON.stringify(b));
-            @*console.log(files[i].name);
-            console.log(files[i]);*@  
-        }
-
-        console.log(a);
-        var object = {};
-        formData.forEach((value, key) => {
-            // Reflect.has in favor of: object.hasOwnProperty(key)
-            if (!Reflect.has(object, key)) {
-                object[key] = value;
-                return;
-            }
-            if (!Array.isArray(object[key])) {
-                object[key] = [object[key]];
-            }
-            object[key].push(value);
-        });
-        var json = JSON.stringify(object);
-
-        console.log(object);
-        return a;
-    }
+ 
 
 
-            function AJAXSubmit(oFormElement) {
-                var req = new XMLHttpRequest();
-                req.onload = function (e) {
-
-                    alert(this.status + ' ' + this.statusText);
-                }
-                req.oprn("post", oFormElement.Action);
-                req.send(new FormData(oFormElement));
-
-            } 
+           
 
 
 </script>

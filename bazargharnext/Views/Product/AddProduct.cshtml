@@ -138,7 +138,7 @@
 
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <strong>Congratulations</strong> You have added new Product successfully. <br />
-    Click <a asp-controller="Product" asp-action="GetProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
+    Click <a asp-controller="Home" asp-action="ViewProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -586,9 +586,8 @@
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script type="text/javascript">
-
     $(document).ready(function () {
-        $(document).on("click", "#addMoreDetail", function () { //
+        $(document).on("click", "#addMoreDetail", function () { 
 
             var Title = $("#mTitle").val();
 
@@ -672,6 +671,7 @@
         });
 
         return data;
+        console.log(data);
     }
 
    

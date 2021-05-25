@@ -39,9 +39,14 @@ namespace bazargharnext.Controllers
             ViewBag.Product_Id = Product_Id;
             return View();
         }
-        public IActionResult ViewProduct()
-        {
 
+
+        [HttpGet]
+        [Route("viewProduct/{id}")]
+        public async Task<IActionResult> ViewProduct(int id)
+        {
+            var products= await GetProductById(id);
+            ViewBag.Products = products;
             return View();
         }
 
@@ -53,6 +58,7 @@ namespace bazargharnext.Controllers
             users = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             MyProductView product = new MyProductView();
             if (ModelState.IsValid)
+
             {
                 product.Product_name = myProductView.Product_name;
                 product.Price = myProductView.Price;
@@ -164,20 +170,31 @@ namespace bazargharnext.Controllers
                 Description=myProductView.Description,
                 Date=myProductView.Date,
             };
+            
             newProduct.GalleryModel = new List<GalleryModel>();
-            foreach (var file in myProductView.Gallery) {
-                newProduct.GalleryModel.Add(new GalleryModel() { 
-                Name=file.Name,
-                URL=file.URL
-                });
-            }
-            newProduct.Product_Details = new List<Product_Details>();
-            foreach (var product_details in myProductView.Product_Details) {
-                newProduct.Product_Details.Add(new Product_Details()
+            if (myProductView.Gallery!=null && myProductView.Gallery.Count > 0)
+            {
+                foreach (var file in myProductView.Gallery)
                 {
-                    Title=product_details.Title,
-                    Description=product_details.Description
-                });
+                    newProduct.GalleryModel.Add(new GalleryModel()
+                    {
+                        Name = file.Name,
+                        URL = file.URL
+                    });
+                }
+            }
+
+            newProduct.Product_Details = new List<Product_Details>();
+            if (myProductView.Product_Details!=null && myProductView.Product_Details.Count > 0)
+            {
+                foreach (var product_details in myProductView.Product_Details)
+                {
+                    newProduct.Product_Details.Add(new Product_Details()
+                    {
+                        Title = product_details.Title,
+                        Description = product_details.Description
+                    });
+                }
             }
 
             await dal.Products.AddAsync(newProduct);

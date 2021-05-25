@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using bazargharnext.AllFunction;
 using bazargharnext.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,13 +18,17 @@ namespace bazargharnext.Controllers
     {
 
         //DataContext _dbContext = new DataContext();
-        
+        GetAllProducts getAllProducts=new GetAllProducts();
+
         [Route("")]
         [Route("index")]
         [Route("~/")]
         
         public IActionResult Index()
         {
+
+            var Products = getAllProducts.GetAllProduct();
+            ViewBag.Products = Products;
             return View();
         }
 
