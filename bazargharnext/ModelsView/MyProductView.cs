@@ -32,6 +32,7 @@ namespace bazargharnext.ModelsView
         public List<Product_Details> Product_Details { get; set; }
 
         public string Category_name { get; set; }
+        public List<MyCommentView> Comments { get; set; }
 
 
     }

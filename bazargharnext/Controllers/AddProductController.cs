@@ -14,8 +14,9 @@ namespace bazargharnext.Controllers
 {
     public class AddProductController : Controller
     {
-        DataContext _dal = new DataContext();
+        DataContext _dal;
         GetSingleProductById GBI = new GetSingleProductById();
+       
         //
         // GET: /addition/
         public ActionResult Index()
@@ -26,7 +27,7 @@ namespace bazargharnext.Controllers
         [HttpPost]
         public bool Add([FromForm] MyProductView mpv   /*string Product,string customers,string Gallery*/)
         {
-
+            _dal = new DataContext();
             var product_Details_json = Request.Form["Product_Details"];
             if (product_Details_json.Count > 0)
             {
@@ -53,54 +54,82 @@ namespace bazargharnext.Controllers
         public async Task<ViewResult> Update(int Id)
         {
             var myProductView =await GBI.GetProductById(Id);
+
             ViewBag.Data = myProductView;
             return View();
         }
         [HttpPost]
-        [Route("update/{id}")]
-        public ViewResult Update(int id,[FromForm] MyProductView myProductView)
+     /*   [Route("AddProduct/Update/{id}")]*/
+        public async Task<int> Update([FromForm] MyProductView myProductView)
         {
-            var product_Details_json = Request.Form["Product_Details"];
+            _dal = new DataContext();
+            var product_Details_json = Request. Form["Product_Details"];
             if (product_Details_json.Count > 0)
             {
                myProductView.Product_Details = JsonConvert.DeserializeObject<List<Product_Details>>(product_Details_json);
             }
+            /**/
+            int returnId = 0 ;
+           // users = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
+            Product product = _dal.Products.First(c => c.Product_Id == myProductView.Product_Id);
+           
 
-            ViewBag.Data = myProductView;
+            //code to update database tables 
+            bool SaveFailed;
+            do
+            {
+                SaveFailed = false;
+                try
+                {
+                    product.Product_name = myProductView.Product_name;
+                    product.Price = (int)myProductView.Price;
+                    product.Description = myProductView.Description;
+                    product.Date = product.Date;
+                    product.Category_id = myProductView.Category_id;
+                    product.Product_Details = myProductView.Product_Details;
 
-            return View();
+
+                    var origins = (from pd in _dal.Product_Details where pd.Product_Id == product.Product_Id select pd).ToList();
+                    _dal.Product_Details.RemoveRange(origins);
+
+
+
+                    returnId = await _dal.SaveChangesAsync();
+                    
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    SaveFailed = true;
+
+                    // Update the values of the entity that failed to save from the store
+                    ex.Entries.Single().Reload();
+                }
+            } while (SaveFailed);
+            //
+
+
+            _dal.Dispose();
+           
+            /**/
+            return returnId;
+        }
+        [HttpGet]
+        public async Task<bool> Delete_Product_Details(int id) {
+            _dal = new DataContext();
+            int ret = 0;
+            
+            _dal.Remove(_dal.Product_Details.Single(a => a.Id == id));
+             ret=await _dal.SaveChangesAsync();
+            if (ret != 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+
         }
 
 
-
-        /*public async Task<MyProductView> GetProductById(int id)
-        {
-            return await _dal.Products.Where(x => x.Product_Id == id).Select(product => new MyProductView()
-            {
-                Product_Id = product.Product_Id,
-                Product_name = product.Product_name,
-                Price=product.Price,
-                Category_id = product.Category_id,
-                Category_name = _dal.Category.Where(x => x.Category_id == product.Category_id).First().Category_name,
-                Date = product.Date,
-                Description = product.Description,
-                Gallery = product.GalleryModel.Select(g => new GalleryModel()
-                {
-                    Id = g.Id,
-                    Name = g.Name,
-                    URL = g.URL
-                }).ToList(),
-                Product_Details = product.Product_Details.Select(p => new Product_Details()
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description
-                }).ToList(),
-
-
-
-            }).FirstOrDefaultAsync();
-
-        }*/
     }
 }

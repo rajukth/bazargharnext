@@ -34,21 +34,38 @@ namespace bazargharnext.Migrations
                     b.ToTable("category");
                 });
 
-            modelBuilder.Entity("bazargharnext.Models.Customer", b =>
+            modelBuilder.Entity("bazargharnext.Models.Comments", b =>
                 {
-                    b.Property<int>("Customerid")
+                    b.Property<int>("Comment_Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("Comment_Text")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
 
-                    b.HasKey("Customerid");
+                    b.Property<int>("Product_Id")
+                        .HasColumnType("int");
 
-                    b.ToTable("Customer");
+                    b.Property<int?>("Product_Id1")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("React")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("Reply_To")
+                        .HasColumnType("int");
+
+                    b.Property<int>("User_By")
+                        .HasColumnType("int");
+
+                    b.HasKey("Comment_Id");
+
+                    b.HasIndex("Product_Id1");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("bazargharnext.Models.GalleryModel", b =>
@@ -167,6 +184,13 @@ namespace bazargharnext.Migrations
                     b.ToTable("user");
                 });
 
+            modelBuilder.Entity("bazargharnext.Models.Comments", b =>
+                {
+                    b.HasOne("bazargharnext.Models.Product", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("Product_Id1");
+                });
+
             modelBuilder.Entity("bazargharnext.Models.GalleryModel", b =>
                 {
                     b.HasOne("bazargharnext.Models.Product", null)
@@ -183,7 +207,7 @@ namespace bazargharnext.Migrations
 
             modelBuilder.Entity("bazargharnext.Models.Product_Details", b =>
                 {
-                    b.HasOne("bazargharnext.Models.Product", "Product")
+                    b.HasOne("bazargharnext.Models.Product", null)
                         .WithMany("Product_Details")
                         .HasForeignKey("Product_Id1");
                 });

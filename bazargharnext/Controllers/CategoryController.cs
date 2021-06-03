@@ -61,7 +61,7 @@ namespace bazargharnext.Controllers
         }
 
 
-        public async Task<List<Category>> GetCategory()
+      /*  public async Task<List<Category>> GetCategory()
         {
             return await dal.Category.Select(x => new Category()
             {
@@ -75,6 +75,6 @@ namespace bazargharnext.Controllers
 
             string name = dal.Category.Where(c => c.Category_id == id).First().Category_name;
             return name;
-        }
+        }*/
     }
 }

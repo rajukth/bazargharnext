@@ -116,7 +116,8 @@
             <h6 class="text-center">Price: $159.00</h6>
 
         </div>
-        @foreach (var Products in myProductView)
+       @if (myProductView.Count() > 0) { 
+        foreach (var Products in myProductView)
         {
 
 
@@ -141,6 +142,7 @@
         <h6 class="text-center">rs. @Products.Price</h6>
 
     </div>}
+        }
 
         <!-- ./Product -->
         <!-- Product  -->

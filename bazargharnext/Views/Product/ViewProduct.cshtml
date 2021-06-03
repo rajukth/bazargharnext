@@ -1,29 +1,40 @@
 ﻿@model bazargharnext.ModelsView.MyProductView
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
 @using bazargharnext.ModelsView
 @{
 
     MyProductView myProductView = ViewBag.Products;
+    List<MyProductView> related = ViewBag.Related;
 
 }
-
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <style>
     .container {
         margin-top: 1px;
-        margin-bottom: 1px
-    }
+        margin-bottom: 1px;
+        height:600px;
 
-    .carousel-inner img {
-        width: 100%;
-        height: 100%
     }
+    .carousel-inner {
+        width:100%;
+    height:320px;
+    overflow:auto;
+    background-color:darkgray;
+    }
+    @*.carousel-inner img {
+        width: auto;
+        height:auto;
+
+    }*@
 
     #custCarousel .carousel-indicators {
         position: static;
-        margin-top: 20px
+        margin-top: 10px
     }
 
         #custCarousel .carousel-indicators > li {
-            width: 100px
+            width: 80px
         }
 
         #custCarousel .carousel-indicators li img {
@@ -40,10 +51,11 @@
         }
 
     .carousel-item img {
-        width: 100%
+        width: 60%;
+        height:100%;
     }
     .title {
-        height: 100px;
+        height: 30px;
 
         margin-bottom: 10px;
         padding: 0;
@@ -96,7 +108,7 @@
         }
 
     .description{
-        height:500px;
+        height:550px;
         overflow:auto;
     }
     table {
@@ -109,11 +121,13 @@
 
 </style>
 <div class="container">
+
+
     <div class="row">
-        <div class="col col-5">
-            <div style="float:right">
-                <font size=40>@myProductView.Product_name</font>
-            </div><br>
+        <div class="col col-12 col-sm-5">
+
+            <font size=40>@myProductView.Product_name</font>
+            <br>
             <div class="title">
 
                 <div class="rate">
@@ -136,27 +150,41 @@
 
             @if (myProductView.Gallery != null && myProductView.Gallery.Count > 0)
             {
-                for (int i = 0; i < myProductView.Gallery.Count; i++)
-                {
-                    <div id="custCarousel" class="carousel slide" data-ride="carousel" align="center">
-                        <!-- slides -->
-                        <div class="carousel-inner">
-                            <div class="carousel-item active"> <img src="@myProductView.Gallery[i].URL" alt="@myProductView.Gallery[i].Name"> </div>
-                        </div>
-                        <!-- Left right --> <a class="carousel-control-prev" href="#custCarousel" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a> <a class="carousel-control-next" href="#custCarousel" data-slide="next"> <span class="carousel-control-next-icon"></span> </a> <!-- Thumbnails -->
-                        <ol class="carousel-indicators list-inline">
-                            <li class="list-inline-item active"> <a id="carousel-selector-@i" class="selected" data-slide-to="@i" data-target="#custCarousel"> <img src="@myProductView.Gallery[i].URL" class="img-fluid"> </a> </li>
 
 
-                            @*<li class="list-inline-item"> <a id="carousel-selector-1" data-slide-to="1" data-target="#custCarousel"> <img src="https://i.imgur.com/Rpxx6wU.jpg" class="img-fluid"> </a> </li>
-                        <li class="list-inline-item"> <a id="carousel-selector-2" data-slide-to="2" data-target="#custCarousel"> <img src="https://i.imgur.com/83fandJ.jpg" class="img-fluid"> </a> </li>
-                        <li class="list-inline-item"> <a id="carousel-selector-3" data-slide-to="3" data-target="#custCarousel"> <img src="https://i.imgur.com/JiQ9Ppv.jpg" class="img-fluid"> </a> </li>
-                            *@
-                        </ol>
+                <div id="custCarousel" class="carousel slide" data-ride="carousel" align="center">
+                    <!-- slides -->
+                    <div class="carousel-inner">
+                        @{
+                            var first = true;
+
+                        }
+                        @foreach (var image in myProductView.Gallery)
+                        {
+
+                            <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
+                                <img src="@image.URL" alt="@image.Name" class="d-block">
+                            </div>
+                            first = false;
+                        }
                     </div>
-                }
+                    <!-- Left right --> <a class="carousel-control-prev" href="#custCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a> <a class="carousel-control-next" href="#custCarousel" data-slide="next" role="button"> <span class="carousel-control-next-icon"></span> </a> <!-- Thumbnails -->
+
+                    <ol class="carousel-indicators list-inline">
+                        @for (int i = 0; i < myProductView.Gallery.Count; i++)
+                        {
+                            <li class="list-inline-item active" style="margin:1px; padding:2px">
+                                <a id="carousel-selector-@i" class="selected" data-slide-to="@i" data-target="#custCarousel">
+                                    <img src="@myProductView.Gallery[i].URL" class="img-fluid" style="height:60px; width:60px">
+                                </a>
+                            </li>
+                        }
+                    </ol>
+
+                </div>
+
 
             }
             else
@@ -166,7 +194,7 @@
 
         </div>
 
-        <div class="col col-7 justify-content-center description">
+        <div class="col col-12 col-sm-7 justify-content-center description">
 
             <table class="table-striped  " width="100%">
                 <tr>
@@ -188,7 +216,7 @@
                     </td>
 
                     <td>
-                        @myProductView.Category_name
+                        <label>@myProductView.Category_name</label>
                     </td>
                 </tr>
                 <tr>
@@ -197,7 +225,7 @@
                     </td>
 
                     <td>
-                        @myProductView.Price
+                        <label>@myProductView.Price</label>
                     </td>
                 </tr>
                 <tr>
@@ -208,16 +236,19 @@
                         @myProductView.Description
                     </td>
                 </tr>
-                @if (myProductView.Product_Details!=null && myProductView.Product_Details.Count>0) {
-                    foreach (var detail in myProductView.Product_Details) { 
-            <tr>
-                <td>
-                    @detail.Title
-                </td>
-                <td>
-                    @detail.Description
-                </td>
-            </tr>    
+                @if (myProductView.Product_Details != null && myProductView.Product_Details.Count > 0)
+                {
+                    foreach (var detail in myProductView.Product_Details)
+                    {
+                        <tr>
+                            <td>
+                                @detail.Title
+                            </td>
+                            <td>
+                                @detail.Description
+                            </td>
+                        </tr>
+
                     }
                 }
 
@@ -225,5 +256,349 @@
 
 
         </div>
+
     </div>
 </div>
+@*Comment section*@
+<style>
+    .comment-section {
+        width: 80%;
+        height: 450px;
+        padding: 5px;
+        background-color: #ffa;
+    }
+
+    .comment-content-old {
+        width: 100%;
+        height: 300px;
+        float: left;
+        overflow: auto;
+    }
+
+    .comment-new {
+        width: 100%;
+        height: 110px;
+        float: left;
+    }
+
+    .comment-other-row {
+        width: 80%;
+        float: left;
+        height: 90px;
+        margin: 8px;
+        border-radius: 8%;
+    }
+
+    .comment-self-row {
+        width: 70%;
+        float: right;
+        height: 90px;
+        margin: 8px;
+        border-radius: 8%;
+    }
+
+
+    .column1 {
+        float: left;
+        width: 15%;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 80px;
+    }
+
+    .column2 {
+        float: left;
+        width: 70%;
+        padding: 5px 5px 5px 10px;
+    }
+
+    .column3 {
+        float: left;
+        width: 10%;
+        padding: 5px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 80px;
+    }
+
+    /* Clear floats after the columns */
+    .comment-other-row:after, .comment-msg-row:after, .comment-self-row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .avatar {
+        max-width: 60px;
+        min-width: 40px;
+        width: 100%;
+        height: 100%;
+        max-height: 60px;
+        min-height: 40px;
+        margin-right: 20px;
+        border-radius: 50%;
+    }
+
+    .reply {
+        padding: 5px;
+        cursor: default;
+        max-width: 40px;
+    }
+
+    /*Comment box */
+    .comment-msg-row {
+        height: 90px;
+        width: 100%;
+        display: inline-block;
+    }
+
+    .comment-msg-col {
+        float: left;
+        width: 90%;
+        padding: 5px 10px;
+        text-align: center;
+    }
+
+    .comment-send-col {
+        float: left;
+        width: 10%;
+        padding: 1%;
+        text-align: center;
+    }
+
+    .send {
+        width: 50px;
+        background: #c9f378;
+        color: #000;
+        font-size: 30px;
+        padding: 8px;
+        border-radius: 5%;
+        cursor: default;
+        line-height: 10px;
+    }
+
+        .reply:hover, .send:hover {
+            background-color: #5f80d9;
+            color: #fff;
+        }
+
+    .msg {
+        resize: none;
+        width: 100%;
+    }
+
+    /*Comment box */
+
+
+</style>
+<script type="text/javascript">
+
+
+
+    function updateScroll() {
+        var element = document.getElementById("comment-content-old");
+        element.scrollTop = element.scrollHeight;
+    }
+    window.onload = updateScroll;
+    var Reply_To;
+    function reply(Reply_To, user) {
+        this.Reply_To = Reply_To;
+        var msgBox = $("#msg");
+
+        msgBox.val("<a onclick=myFunction(" + Reply_To +")>\u0040" + user + "</a> ");
+        msgBox.focus();
+    };
+    $(function click() {
+        $("#btnComment").click(function (e) {
+            var Reply_To = Reply_To;
+            var Product_Id =@myProductView.Product_Id;
+            var formData = new FormData();
+
+            formData.append("Comment_Text", $("#msg").val());
+            formData.append("id", Product_Id);
+            formData.append("Reply_To", Reply_To);
+            formData.append("Product_Id", Product_Id);
+            $.ajax({
+                type: "Post",
+                url: "/Comment/PostComment",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    var Comments = data;
+                    alert(Comments.Comment_Text);
+                    var CommentAdded = "<div class='comment-self-row' style='background-color:#fbdddd;' id="+Comments.Comment_Id+">"+
+                        "<div class='column3'></div>"+
+                        "<div class='column2'>"+
+                        "<p class='msg'>" + Comments.Comment_Text +
+                        "</p><span style='color:#aaa'>Reply to:"+Comment.Reply_To+" , " + Comments.Date +
+                        "</span></div><div class='column1'><img src='" + Comments.SenderProfile + "' alt='Avatar' class='avatar'></div></div>";
+                    $(".comment-content-old").append(CommentAdded);
+                    updateScroll;
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+                },
+                error: function (res) {
+                    alert(res.responseText);
+                }
+
+
+            });
+
+
+
+        });
+    });
+
+
+
+</script>
+
+<div class="comment-section">
+
+    <h2>Comments</h2>
+    <div class="comment-content-old" id="comment-content-old">
+        @**@
+        @if (myProductView.Comments.Count > 0)
+        {
+            var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
+            foreach (var comment in myProductView.Comments)
+            {
+                if (comment.User_By != user.Userid)
+                {
+
+
+                    <div class="comment-other-row" style="background-color:#e5e5e5" id="@comment.Comment_Id">
+                        <div class="column1">
+                            <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
+                        </div>
+                        <div class="column2">
+                            <p class="msg">@comment.Comment_Text</p>
+                            <span style="color:#aaa">Reply to:@comment.Reply_To ,  @comment.Date</span>
+                        </div>
+                        <div class="column3">
+                            <a class="reply" onclick="reply(@comment.Comment_Id,@comment.User_By);">
+                                <i class="fa fa-reply" aria-hidden="true"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="comment-self-row" style="background-color:#fbdddd;">
+                        <div class="column3">
+
+                        </div>
+                        <div class="column2">
+                            <p class="msg">@comment.Comment_Text</p>
+                            <span style="color:#aaa">Reply to: @comment.Reply_To , @comment.Date</span>
+                        </div>
+                        <div class="column1">
+                            <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
+                        </div>
+                    </div>
+                }
+            }
+        }
+        @**@
+    </div>
+    <div class="comment-new" style="margin-top:6px; border-top-width:5px;">
+        <div class="comment-msg-row">
+
+
+            <div class="comment-msg-col">
+                <textarea rows=3 class="msg" id="msg"></textarea>
+            </div>
+            <div class="comment-send-col">
+                <a class="btn send" id="btnComment">
+                    <i class="fa fa-comments" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Comment section*@
+
+
+@*Related Product view *@
+<div class="related">
+    <div style="margin:5px;">
+        <font size="10">Related Product</font>
+    </div>
+    <ul style="padding: 5px;text-align: center;">
+        @for (int i = 0; i < 8; i++)
+        {
+            int total = related.Count();
+            Random random = new Random();
+            int offset = random.Next(0, total);
+
+
+
+            <li style="display:inline-block">
+                <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@related[offset].Product_Id">
+                    <div class=" product-grid ">
+                        <div class="image">
+
+
+                            @if (@related[offset].Gallery.Count > 0)
+                            {
+                                <img src="@related[offset].Gallery[0].URL" alt="@related[offset].Gallery[0].Name" />
+                            }
+                            else
+                            {
+                                <img src="~/images/products/noimages.png" alt="No Image" />
+                            }
+                            <p class="text-center" style="font-size:10px">@related[offset].Product_name</p>
+                            <p class="text-center" style="font-size:10px">rs. @related[offset].Price</p>
+                            <div class="overlay">
+                                <div class="detail">View Details</div>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<style type="text/css">
+    .related {
+        height: 280px;
+        background: #c9f378;
+        overflow: auto;
+    }
+
+    .product-grid {
+        width: 120px;
+        height: 170px;
+        margin: 0 10px 5px 0;
+        background: #c2acde;
+        border: 4px solid white;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    ul#scroll li {
+        display: inline;
+    }
+
+    .product-grid .image {
+        color: #000000;
+    }
+
+    .image img {
+        width: 100px;
+        height: 80px;
+        margin-bottom: 5px;
+    }
+</style>
+@*Related Product view *@

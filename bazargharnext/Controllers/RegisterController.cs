@@ -42,7 +42,7 @@ namespace bazargharnext.Controllers
             else
             {
                 users.Password = Encryption(users.Password);
-                users.Photo = "user.png";
+                users.Photo = "/image/profile/user.png";
                 _dal.Users.Add(users);
                 _dal.SaveChanges();
 

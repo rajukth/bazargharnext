@@ -4,15 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using bazargharnext.ModelsView;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json.Linq;
+using bazargharnext.AllFunction;
 
 namespace bazargharnext.Controllers
 {
@@ -21,9 +18,13 @@ namespace bazargharnext.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         readonly DataContext dal = new DataContext();
+        GetSingleProductById getSingleProductById = new GetSingleProductById();
         User users;
+        UploadImageFunction uploadImage;
+
         public ProductController(IWebHostEnvironment webHostEnvironment) {
             _webHostEnvironment = webHostEnvironment;
+            uploadImage = new UploadImageFunction(webHostEnvironment);
         }
 
         
@@ -45,8 +46,13 @@ namespace bazargharnext.Controllers
         [Route("viewProduct/{id}")]
         public async Task<IActionResult> ViewProduct(int id)
         {
-            var products= await GetProductById(id);
+            var products= await getSingleProductById.GetProductById(id);
             ViewBag.Products = products;
+            GetProductByCategory getProductByCategory = new GetProductByCategory();
+            var related = getProductByCategory.GetProductByCategory_id(products.Category_id);
+           
+            
+            ViewBag.Related = related;
             return View();
         }
 
@@ -87,7 +93,7 @@ namespace bazargharnext.Controllers
                         var galleryModel = new GalleryModel()
                         {
                             Name = file.FileName,
-                            URL = await UploadImage(folder, file)
+                            URL = await uploadImage.UploadImage(folder, file)
                         };
                         product.Gallery.Add(galleryModel);
                        }
@@ -115,7 +121,7 @@ namespace bazargharnext.Controllers
         [Route("product-details/{id:int:min(1)}", Name = "productDetailsRoute")]
         public async Task<ViewResult> Update(int id)
         {
-            var data = await GetProductById(id);
+            var data = await getSingleProductById.GetProductById(id);
 
             return View(data);
         }
@@ -140,7 +146,7 @@ namespace bazargharnext.Controllers
                     {
                         Id=id,
                         Name = file.FileName,
-                        URL = await UploadImage(folder, file)
+                        URL = await uploadImage.UploadImage(folder, file)
                     };
 
 
@@ -162,7 +168,6 @@ namespace bazargharnext.Controllers
         public async Task<int> AddProductData(MyProductView myProductView) {
             var newProduct = new Product()
             {
-
                 Userid=myProductView.Userid,
                 Product_name = myProductView.Product_name,
                 Category_id=myProductView.Category_id,
@@ -203,44 +208,13 @@ namespace bazargharnext.Controllers
             return newProduct.Product_Id;
         }
 
-        public async Task<MyProductView> GetProductById(int id) {
-            return await dal.Products.Where(x => x.Product_Id == id).Select(product => new MyProductView()
-            {
-                Product_Id=product.Product_Id,
-                Product_name=product.Product_name,
-                Category_id=product.Category_id,
-                Date=product.Date,
-                Description=product.Description,
-                Gallery=product.GalleryModel.Select(g=>new GalleryModel(){
-                Id=g.Id,
-                Name=g.Name,
-                URL=g.URL
-                }).ToList(),
-                Product_Details = product.Product_Details.Select(p => new Product_Details()
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description
-                }).ToList(),
-
-
-
-            }).FirstOrDefaultAsync();
-
-        }
+        
         
 
         //
 
 
 
-        private async Task<string> UploadImage(String folderPath, IFormFile file) { 
-        
-        folderPath+= Guid.NewGuid().ToString() + "_" + file.FileName;
-            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
-
-            await file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
-            return "/" + folderPath;
-        }
+       
     }
 }

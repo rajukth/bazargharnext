@@ -129,7 +129,7 @@
 </script>
 
 
-<form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="AddProduct">
+<form method="post" enctype="multipart/form-data" >
     <div class="row">
         <div class="col col-4  menu">
             @**@
@@ -138,7 +138,7 @@
 
 <div class="alert alert-success alert-dismissible fade show" role="alert">
     <strong>Congratulations</strong> You have added new Product successfully. <br />
-    Click <a asp-controller="Home" asp-action="ViewProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
+    Click <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -304,7 +304,7 @@
 
             <div class="btnGroup text-center">
                 <button type="reset" class="clear">Clear</button>
-                <button type="submit" class="post" id="btnSubmit">Post</button>
+                <button class="post" id="btnSubmit">Post</button>
             </div>
         </div>
         @*end of col-8*@
@@ -592,6 +592,8 @@
             var Title = $("#mTitle").val();
 
             var Details = $("#mDescription").val();
+            alert(Title);
+            alert(Details);
             var rowCount = $('.product-details-tr').length + 1;
             var contactdiv = '<tr class="product-details-tr">' +
                 '<td width=40%><input type="text" name="txtTitle' + rowCount + '" class="form-control f-name01" value=' + Title + '></td>' +
@@ -613,9 +615,10 @@
             var product_Details = getAllProductDetails();
             var formData = new FormData();
             var files = $('#fileupload').get(0).files;
+            
             console.log(files);
             formData.append("Product_Name", product.Product_Name);
-            formData.append("Category_id", 1);
+            formData.append("Category_id", $("select").val());
             formData.append("Price", product.Price);
             formData.append("Description", product.Description);
             formData.append("Product_Details", JSON.stringify(product_Details));

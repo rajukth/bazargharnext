@@ -21,14 +21,15 @@ namespace bazargharnext.Controllers
         private readonly IWebHostEnvironment webHostEnvironment;
         private DataContext _dal=new DataContext();
         GetAllProductsByUserId getAllProductsByUserId = new GetAllProductsByUserId();
-
+        UploadImageFunction uploadImage;
         User user;
         public MyProfileController( IWebHostEnvironment hostEnvironment)
         {
             webHostEnvironment = hostEnvironment;
+           uploadImage = new UploadImageFunction(hostEnvironment);
         }
 
-        public Task<ViewResult> Index()
+        public async Task<ViewResult> Index()
         {
 
             user = JsonConvert.DeserializeObject<User>(value: HttpContext.Session.GetString("User"));
@@ -37,7 +38,7 @@ namespace bazargharnext.Controllers
             var data = getAllProductsByUserId.GetProductByUserId(user.Userid);
             ViewBag.Product = data;        
 
-            return Task.FromResult(View());
+            return await Task.FromResult(View());
         }
         public IActionResult UpdateProfile()
         {
@@ -54,7 +55,7 @@ namespace bazargharnext.Controllers
             return (IActionResult)View();
         }
         [HttpPost]
-        public IActionResult Update(MyProfileView model) {
+        public async Task<IActionResult> Update(MyProfileView model) {
             _dal = new DataContext();
             user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
 
@@ -66,7 +67,7 @@ namespace bazargharnext.Controllers
                 uniqueFileName = user.Photo;
             }
             else { 
-            uniqueFileName = UploadedFile(model,user.Photo);
+            uniqueFileName =await UploadedFile(model,user.Photo);
                 
                
 
@@ -105,18 +106,21 @@ namespace bazargharnext.Controllers
             _dal.Dispose();
         }
 
-        private string UploadedFile(MyProfileView model,string oldFileName)
+        private async Task<string> UploadedFile(MyProfileView model,string oldFileName)
         {
-            string uniqueFileName = null;
-
+           
+            string filePath = null;
+            string folder = "images/profile/";
             if (model.Photo != null)
             {
-                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images/profile");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using var fileStream = new FileStream(filePath, FileMode.Create);
-                model.Photo.CopyTo(fileStream);
-               
+                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, folder);
+                /* string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                  filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                 using var fileStream = new FileStream(filePath, FileMode.Create);
+                 model.Photo.CopyTo(fileStream);
+                */
+                filePath = await uploadImage.UploadImage(folderPath: folder, file: model.Photo);
+
                 //removing from folder
                 string oldPath = Path.Combine(uploadsFolder, oldFileName);
                 if (System.IO.File.Exists(oldPath))
@@ -125,7 +129,7 @@ namespace bazargharnext.Controllers
                 }
 
             }
-            return uniqueFileName;
+            return filePath;
         }
 
         //repo

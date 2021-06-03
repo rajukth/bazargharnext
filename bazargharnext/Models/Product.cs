@@ -23,6 +23,7 @@ namespace bazargharnext.Models
 
         public List<Product_Details> Product_Details { get; set; } //imp
         public ICollection<GalleryModel> GalleryModel { get; set; }
+        public List<Comments> Comments { get; set; }
 
     }
 }

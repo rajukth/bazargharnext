@@ -18,8 +18,11 @@ namespace bazargharnext.Models
 				.AddJsonFile("appsettings.json");
 
 			var configuration = builder.Build();
+			
 			optionsBuilder.UseMySql(configuration
-				["ConnectionStrings:DefaultConnection"]);
+				["ConnectionStrings:DefaultConnection"]
+				
+				);
 
 		}
 
@@ -29,8 +32,10 @@ namespace bazargharnext.Models
 		public DbSet<Product> Products { get; set; }
 
 		public DbSet<Product_Details> Product_Details { get; set; }
-		public DbSet<Customer> Customers { get; set; }
+		
 		public DbSet<GalleryModel> Gallery { get; set; }
+		public DbSet<Comments> Comments { get; set; }
+		
 
 	}
 
