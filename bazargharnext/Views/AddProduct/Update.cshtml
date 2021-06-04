@@ -137,7 +137,14 @@
 
 </script>
 <style >
-   
+    .deleteContact {
+        opacity: 0.6;
+        transition: transform .2s;
+    }
+        .deleteContact:hover {
+            transform: scale(2.0);
+            opacity: 1;
+        }
     .container {
         width: 100%;
         height: auto;
@@ -178,6 +185,7 @@
             min-width: 100px;
             max-height: 130px;
         }
+       
     .btn {
         width: 150px;
         height: 35px;
@@ -189,6 +197,10 @@
     color:white;
     background-color:#000000;
     }
+        .addMore:hover {
+        color:#ffffff;
+        background-color:green;
+        }
     .btnSubmit {
         margin-left:10px;
         color:white;

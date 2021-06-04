@@ -263,7 +263,7 @@
 <style>
     .comment-section {
         width: 80%;
-        height: 450px;
+        height: 460px;
         padding: 5px;
         background-color: #ffa;
     }
@@ -459,7 +459,8 @@
 
 <div class="comment-section">
 
-    <h2>Comments</h2>
+    <div><h2>Comments</h2><h6></h6></div>
+
     <div class="comment-content-old" id="comment-content-old">
         @**@
         @if (myProductView.Comments.Count > 0)
@@ -483,6 +484,7 @@
                             <a class="reply" onclick="reply(@comment.Comment_Id,@comment.User_By);">
                                 <i class="fa fa-reply" aria-hidden="true"></i>
                             </a>
+    
 
                         </div>
                     </div>
@@ -572,7 +574,8 @@
 
 <style type="text/css">
     .related {
-        height: 280px;
+        margin-top:10px;
+        height: 290px;
         background: #c9f378;
         overflow: auto;
     }

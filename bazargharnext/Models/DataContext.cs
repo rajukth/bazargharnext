@@ -21,6 +21,7 @@ namespace bazargharnext.Models
 			
 			optionsBuilder.UseMySql(configuration
 				["ConnectionStrings:DefaultConnection"]
+				//["ConnectionStrings:bazargharnextContextConnection"]
 				
 				);
 
