@@ -12,38 +12,31 @@ namespace bazargharnext.AllFunction
     {
         DataContext _dal;
 
-        public List<MyProductView> GetProductByCategory_id(int id)
+        public async Task<List<Product>> GetProductByCategory_id(int id)
         {
             _dal = new DataContext();
-            List<MyProductView> myProductView = _dal.Products.Where(x => x.Category_id == id).Select(product => new MyProductView()
+            var Product =await _dal.Products.Where(x => x.Category_id == id).Select(product => new Product()
             {
                 Product_Id = product.Product_Id,
                 Product_name = product.Product_name,
                 Price = product.Price,
                 Category_id = product.Category_id,
-                Category_name = _dal.Category.Where(x => x.Category_id == product.Category_id).First().Category_name,
-                Date = product.Date,
-                Description = product.Description,
-                Gallery = product.GalleryModel.Select(g => new GalleryModel()
+               
+                GalleryModel = product.GalleryModel.Select(g => new GalleryModel()
                 {
                     Id = g.Id,
                     Name = g.Name,
                     URL = g.URL
                 }).ToList(),
-                Product_Details = product.Product_Details.Select(p => new Product_Details()
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description
-                }).ToList(),
+               
 
 
 
-            }).ToList();
+            }).ToListAsync();
 
             _dal.Dispose();
            
-            return myProductView;
+            return Product;
         }
     }
 }

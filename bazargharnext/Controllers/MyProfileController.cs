@@ -18,14 +18,16 @@ namespace bazargharnext.Controllers
 {
     public class MyProfileController : Controller
     {
-        private readonly IWebHostEnvironment webHostEnvironment;
+
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         private DataContext _dal=new DataContext();
         GetAllProductsByUserId getAllProductsByUserId = new GetAllProductsByUserId();
         UploadImageFunction uploadImage;
         User user;
         public MyProfileController( IWebHostEnvironment hostEnvironment)
         {
-            webHostEnvironment = hostEnvironment;
+            _webHostEnvironment = hostEnvironment;
            uploadImage = new UploadImageFunction(hostEnvironment);
         }
 
@@ -113,29 +115,22 @@ namespace bazargharnext.Controllers
             string folder = "images/profile/";
             if (model.Photo != null)
             {
-                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, folder);
-                /* string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
-                  filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                 using var fileStream = new FileStream(filePath, FileMode.Create);
-                 model.Photo.CopyTo(fileStream);
-                */
+                
+             
                 filePath = await uploadImage.UploadImage(folderPath: folder, file: model.Photo);
 
                 //removing from folder
-                string oldPath = Path.Combine(uploadsFolder, oldFileName);
-                if (System.IO.File.Exists(oldPath))
+                var oldFile = Path.Combine(_webHostEnvironment.WebRootPath,oldFileName.Remove(0, 1)); //removing first '/'  from image.Url  
+                if (System.IO.File.Exists(oldFile))
                 {
-                    System.IO.File.Delete(oldPath);
+                    System.IO.File.Delete(oldFile);
                 }
 
             }
             return filePath;
         }
 
-        //repo
-        
-        //
-
+       
 
     }
 }

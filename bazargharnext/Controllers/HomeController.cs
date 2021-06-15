@@ -16,8 +16,7 @@ namespace bazargharnext.Controllers
     [Route("home")]
     public class HomeController : Controller
     {
-
-        //DataContext _dbContext = new DataContext();
+        DataContext _dal;
         GetAllProducts getAllProducts=new GetAllProducts();
 
         [Route("")]
@@ -26,9 +25,12 @@ namespace bazargharnext.Controllers
         
         public IActionResult Index()
         {
-
+            
+            _dal = new DataContext();
+            ViewBag.Categories = _dal.Category.ToList();
             var Products = getAllProducts.GetAllProduct();
             ViewBag.Products = Products;
+            _dal.Dispose();
             return View();
         }
 

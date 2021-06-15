@@ -33,6 +33,6 @@
     <Folder Include="Views\Shared\images\" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/github-action.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="http://json-schema.org/draft-04/schema#" /></VisualStudio></ProjectExtensions>
 
 </Project>

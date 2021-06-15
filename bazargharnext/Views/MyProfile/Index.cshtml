@@ -268,7 +268,7 @@
                                 <a class="thumbnail" href="">
                                     <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" /><span><img src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" width="100" height="100" /></span>
                                 </a>
-                                <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Gallery[i].Id"><i class="fa fa-camera"></i></a>
+                               
 
                             </div>
                                 }
@@ -297,8 +297,8 @@
                                         <td style="padding: 0 10px ">
                                             <div class="row">
                                                 <label class="col col-8">@product.Product_Id</label>
-                                                <a class="update col col-2 text-center" title="Update Details" asp-controller="AddProduct" asp-action="Update" asp-route-id="@product.Product_Id"><i class="fa fa-refresh"  ></i></a>
-                                                <a class="delete col col-2" title="Delete Products" onclick="delete_Product(@product.Product_Id)" ><i class="fa fa-trash"></i></a>
+                                                <a class="update col col-2 text-center" title="Update Details" asp-controller="Product" asp-action="Update_Product" asp-route-id="@product.Product_Id"><i class="fa fa-refresh"  ></i></a>
+                                                <a class="delete col col-2" title="Delete Products" onclick="delete_Product(@product.Product_Id)" ><i class="fa fa-trash" style="color:red;"></i></a>
                                             </div>
                                         </td>
 
@@ -374,29 +374,34 @@
 </div>
 <script>
     function delete_Product(id) {
-        alert("product id = " + id);
-    }
-    function update_Product(id) {
-        alert("product id = " + id);
+       
+        if (id != 0) {
+            if (confirm("Are You Sure You want to delete it? \n After deleting you can't retrive it")) {
 
-     @*   $.ajax({
-            type: "Post",
-            url: "/AddProduct/Update",
-            data: { 'Id': id },
-            dataType:'json',
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                alert(data);
-            },
-            failure: function (res) {
-                alert(res.responseText);
-            },
-            error: function (res) {
-                alert(res.responseText);
+
+                $.ajax({
+                    type: "Get",
+                    url: "/Product/DeleteProduct",
+                    data: { 'Id': id },
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        location.reload();
+                    },
+                    failure: function (res) {
+                        alert(res.responseText);
+                    },
+                    error: function (res) {
+                        alert(res.responseText);
+                    }
+
+
+                });
             }
+        } else {
+                alert("Product Cannot Be Deleted.");
 
-
-        });*@
+            }
 
     }
 

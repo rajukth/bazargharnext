@@ -34,6 +34,9 @@ namespace bazargharnext.ModelsView
         public string Category_name { get; set; }
         public List<MyCommentView> Comments { get; set; }
 
-
+        public static implicit operator MyProductView(MyCommentView v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

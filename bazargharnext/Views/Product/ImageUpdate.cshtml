@@ -2,44 +2,109 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
 
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <div class="text-center">
         <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="ImageUpdate">
             <div class="form-group">
-                <label for="file-ip-1" class="image">
-                    <img src="~/images/add-image.png" title="Upload Image" id="file-ip-1-preview" style="width:400px;height:300px;" alt="avatar" class="border img-responsive">
-                </label>
-                <input asp-for="GalleryFiles" id="file-ip-1" accept="image/*" class="fa fa-camera" style="display:none" onchange="showPreviewOne(event);">
+                <a class="image" onclick="addimage();">
+                    <img src="~/images/addimageicon.png" title="Upload Image" id="preview" style="width:400px;height:300px;" alt="avatar" class="border img-responsive">
+                </a>
+                <input type="file" id="GalleryFiles" accept="image/*" class="fa fa-camera" hidden>
                 <br />
-                <span asp-validation-for="GalleryFiles" class="text-danger"></span>
+                
             </div>
 
-            <input type="submit" class="btn btn-primary" />
+            <button type="button" class="btn btn-primary UpdateImage" >Update</button>
         </form>
 
     </div>
 
-}
+
 
 
 
 <script>
+    $(".UpdateImage").prop('disabled', true);
+    @**@
+    function addimage() {
+        alert("click")
+        $("#GalleryFiles").click();
+       
+    }
+  
+    $(function () {
+        $("#GalleryFiles").change(function () {
+
+            if (typeof (FileReader) != "undefined") {
+               var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+                 $($(this)[0].files).each(function () {
+
+                    var file = $(this);
+                    if (regex.test(file[0].name.toLowerCase())) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $("#preview").prop("src", e.target.result);
+                         }
+                        reader.readAsDataURL(file[0]);
+                        $(".UpdateImage").prop('disabled', false);
+                    } else {
+                        alert(file[0].name + " is not a valid image file.");
+                        return false;
+                    }
+                 
+
+                });
+
+            } else {
+                alert("This browser does not support HTML5 FileReader.");
+            }
+
+        });
+    });
+
+@**@
+
     function goBack() {
         window.history.back();
     }
-    function showPreviewOne(event) {
-        if (event.target.files.length > 0) {
-            let src = URL.createObjectURL(event.target.files[0]);
-            let preview = document.getElementById("file-ip-1-preview");
-            preview.src = src;
-            preview.style.display = "block";
-
-
-
+  
+    $(document).on("click", ".UpdateImage", function (e) {
+        e.preventDefault();
+        var formData = new FormData();
+        var files = $('#GalleryFiles').get(0).files;
+        for (i = 0; i < files.length; i++) {
+            formData.append("GalleryFiles", files[i]);
         }
+        formData.append("id",@ViewBag.Id);
+        $.ajax({
+            type: "Post",
+            url: "/Product/ImageUpdate",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                alert("Image Updated Successfully");
+                window.history.back();
+               
 
-    }
+            },
+            failure: function (res) {
+                alert(res.responseText);
+
+            },
+            error: function (res) {
+                alert(res.responseText);
+            }
+
+
+        });
+        // closest used to remove the respective 'tr' in which I have my controls
+
+
+    });
+
 
 
 </script>

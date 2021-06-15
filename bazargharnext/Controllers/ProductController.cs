@@ -10,6 +10,8 @@ using bazargharnext.ModelsView;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using bazargharnext.AllFunction;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace bazargharnext.Controllers
 {
@@ -17,8 +19,9 @@ namespace bazargharnext.Controllers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        readonly DataContext dal = new DataContext();
+        DataContext dal;
         GetSingleProductById getSingleProductById = new GetSingleProductById();
+        GetProductByCategory getProductByCategory = new GetProductByCategory();
         User users;
         UploadImageFunction uploadImage;
 
@@ -30,7 +33,7 @@ namespace bazargharnext.Controllers
         
         public ViewResult AddProduct(bool isSuccess = false, int Product_Id = 0)
         {
-
+            dal = new DataContext();
             List<Category> cat = new List<Category>();
             cat = (from c in dal.Category select c).ToList();
             cat.Insert(0, new Category { Category_id = 0, Category_name = "-- Select Category --", Category_description = "Select" });
@@ -38,9 +41,9 @@ namespace bazargharnext.Controllers
 
             ViewBag.isSuccess = isSuccess;
             ViewBag.Product_Id = Product_Id;
+            dal.Dispose();
             return View();
         }
-
 
         [HttpGet]
         [Route("viewProduct/{id}")]
@@ -48,11 +51,10 @@ namespace bazargharnext.Controllers
         {
             var products= await getSingleProductById.GetProductById(id);
             ViewBag.Products = products;
-            GetProductByCategory getProductByCategory = new GetProductByCategory();
-            var related = getProductByCategory.GetProductByCategory_id(products.Category_id);
            
             
-            ViewBag.Related = related;
+            var related = await getProductByCategory.GetProductByCategory_id(products.Category_id);
+           ViewBag.Related = related;
             return View();
         }
 
@@ -64,7 +66,6 @@ namespace bazargharnext.Controllers
             users = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             MyProductView product = new MyProductView();
             if (ModelState.IsValid)
-
             {
                 product.Product_name = myProductView.Product_name;
                 product.Price = myProductView.Price;
@@ -88,7 +89,7 @@ namespace bazargharnext.Controllers
                     string folder = "images/products/";
                     for (int i = 0; i < gallery.Count; i++)
                     {
-                        var file = HttpContext.Request.Form.Files["GalleryFiles"];
+                        var file = gallery[i];//HttpContext.Request.Form.Files["GalleryFiles"];
                  
                         var galleryModel = new GalleryModel()
                         {
@@ -107,65 +108,163 @@ namespace bazargharnext.Controllers
 
             return View();
         }
-        //Add Product Details to product
-        public List<Product_Details> PD(string DetailsString) {
-            
-                List<Product_Details> product_Details = JsonConvert.DeserializeObject<List<Product_Details>>(DetailsString);
-            return product_Details;
-        }
+     
 
-
-
-        //
-
-        [Route("product-details/{id:int:min(1)}", Name = "productDetailsRoute")]
+        /*[Route("product-details/{id:int:min(1)}", Name = "productDetailsRoute")]
         public async Task<ViewResult> Update(int id)
         {
             var data = await getSingleProductById.GetProductById(id);
 
             return View(data);
-        }
+        }*/
         
         [HttpGet]
         [Route("ImageUpdate/{id}")]
         public IActionResult ImageUpdate(int id)
         {
+            ViewBag.Id = id;
             return View();
         }
         [HttpPost]
-        [Route("ImageUpdate/{id}")]
-        public async Task<IActionResult> ImageUpdate(int id, MyProductView myProductView)
+        //[Route("ImageUpdate/{id}")]
+        public async Task<bool> ImageUpdate(MyProductView myProductView)
         {
+            dal = new DataContext();
+            var id = int.Parse(Request.Form["id"]);
+            var img = dal.Gallery.Single(a => a.Id == id);
+
+           
+           
+           
             bool isSuccess=false;
             string folder = "images/products/";
             if (myProductView.GalleryFiles != null)
             {
-                foreach (var file in myProductView.GalleryFiles)
-                {
-                    GalleryModel galleryModel = new GalleryModel()
+                                    GalleryModel galleryModel = new GalleryModel()
                     {
                         Id=id,
-                        Name = file.FileName,
-                        URL = await uploadImage.UploadImage(folder, file)
+                        Name = myProductView.GalleryFiles[0].FileName,
+                        URL = await uploadImage.UploadImage(folder, myProductView.GalleryFiles[0])
                     };
 
 
                     dal.Entry(galleryModel).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                    dal.SaveChanges();
-                    isSuccess = true;
+                //removing from folder
+                var oldFile = Path.Combine(_webHostEnvironment.WebRootPath, img.URL.Remove(0, 1));
+                if (System.IO.File.Exists(oldFile))
+                {
+                    System.IO.File.Delete(oldFile);
+                }
+                isSuccess = true;
                
                 }
-            }
+            
             if (isSuccess)
             {
-                return RedirectToAction("Index","MyProfile");
+                return isSuccess;
             }
-            return View();
+            return false;
+        }
+        [HttpGet]
+        public async Task<bool> Delete_Product_Details(int id)
+        {
+            dal = new DataContext();
+            int ret = 0;
+
+            dal.Remove(dal.Product_Details.Single(a => a.Id == id));
+            ret = await dal.SaveChangesAsync();
+            if (ret != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        [HttpGet]
+        public async Task<bool> DeleteProduct(int id)
+        {
+            dal = new DataContext();
+            int ret = 0;
+            MyProductView product = await getSingleProductById.GetProductById(id);
+            try {
+                if (product.Gallery != null)
+                {
+
+                    foreach (var img in product.Gallery) {
+                        //removing from folder
+                        var oldFile = Path.Combine(_webHostEnvironment.WebRootPath, img.URL.Remove(0, 1)); ;
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                        }
+                    }
+
+                    dal.Remove(dal.Products.Single(a => a.Product_Id == id));
+
+
+
+                    ret = await dal.SaveChangesAsync();
+
+                }
+               
+            }
+            catch (DbUpdateConcurrencyException ex) {
+                ex.Entries.Single().Reload();
+            }
+            if (ret != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        [HttpGet]
+        public async Task<bool> Delete_Image(int id)
+        {
+            dal = new DataContext();
+            int ret = 0;
+            var img = dal.Gallery.Single(a => a.Id == id);
+
+            dal.Remove(img);
+            //removing from folder
+            var oldFile = Path.Combine(_webHostEnvironment.WebRootPath, img.URL.Remove(0, 1));
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
+            ret = await dal.SaveChangesAsync();
+            if (ret != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
+        //search by category
+
+        [HttpGet]
+        public async Task<JsonResult> GetByCategory(int id)
+        {
+
+            var product = await getProductByCategory.GetProductByCategory_id(id);
+
+            return Json(product); ;
+        }
+        //Search by caregory
 
         //repository
         public async Task<int> AddProductData(MyProductView myProductView) {
+            dal = new DataContext();
             var newProduct = new Product()
             {
                 Userid=myProductView.Userid,
@@ -207,11 +306,7 @@ namespace bazargharnext.Controllers
 
             return newProduct.Product_Id;
         }
-
-        
-        
-
-        //
+//
 
 
 

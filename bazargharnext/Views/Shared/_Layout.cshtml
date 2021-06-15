@@ -104,31 +104,32 @@
 
 
             </ul>
+
+            <label id="isLoggedin" hidden>@Context.Session.GetString("isLogined")</label>
             @if (Context.Session.GetString("isLogined") == "true")
             {
         <form method="post" asp-controller="Register" asp-action="Logout">
-        <ul class="navbar-nav ml-auto d-flex">
-              <li>
-                @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
-                <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
+            <ul class="navbar-nav ml-auto d-flex">
+                <li>
+                    @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
+                    <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
+                </li>
+            </ul>
+        </form> }
+    else
+    {<ul class="navbar-nav ml-auto d-flex">
+
+
+            <li>
+                <a id="login" data-target="#myLoginModal" class="nav-link" data-toggle="modal">Login</a>
             </li>
             <li>
-                <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
-                  </li>
-                </ul>
-                                        </form> }
-                                                    else
-                                                    {<ul class="navbar-nav ml-auto d-flex">
-
-
-    <li>
-        <a id="login" data-target="#myLoginModal" class="nav-link" data-toggle="modal">Login</a>
-    </li>
-    <li>
-        <a id="register" data-target="#myRegistrationModal" class="nav-link" data-toggle="modal">Register</a>
-    </li>
-</ul>
-            }
+                <a id="register" data-target="#myRegistrationModal" class="nav-link" data-toggle="modal">Register</a>
+            </li>
+        </ul>            }
 
         </div>
     </nav>

@@ -1,7 +1,10 @@
 ﻿@{ ViewData["Title"] = "Home Page";
 }
 @using bazargharnext.ModelsView;
+
+@using Microsoft.AspNetCore.Http;
 @{
+    List<Category> categories = ViewBag.Categories;
     IEnumerable<MyProductView> myProductView = ViewBag.Products;
 
 }
@@ -11,10 +14,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <style>
     /*---- Custom CSS ----*/
     .search-box {
+        width: 100%;
         margin: 0px;
+        position: relative;
+        display: inline;
     }
 
         .search-box .btn-light {
@@ -49,58 +57,97 @@
         margin-bottom: 8px;
         background: #c2acde;
         border: 4px solid white;
-        border-radius: 5px;
+        border-radius: 10px;
     }
 
     .image {
         margin-bottom: 20px;
     }
 </style>
-<form action="">
-    <div class="row" style="margin-top: -47px;width: 100%;  background-color: #c2acde;">
-        <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6" style="margin: 0px;">
-            <div class="search-box col">
 
-                <div class="input-group ">
-                    <div class="input-group-prepend">
-                        <a style="width:60px; margin:0px" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Motorbike</a>
-                            <a class="dropdown-item" href="#">Car</a>
-                            <a class="dropdown-item" href="#">Computer</a>
-                            <a class="dropdown-item" href="#">Electroniocs</a>
-                        </div>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Search product here..">
-                    <div class="input-group-append">
-                        <a class="btn btn-success" style="width:80px; margin:0px">Search</a>
-                    </div>
+@*For Dropdown list*@
+<style>
+
+    .dropbtn {
+        width: 100px;
+        background-color: #3498DB;
+        color: white;
+        padding: 8px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #2980B9;
+        }
 
 
-                </div>
 
+    #mydropDown {
+        position: absolute;
+        display: none;
+        background-color: #f1f1f1;
+        width: 600px;
+        max-width: 600px;
+        min-width: 160px;
+        max-height: 500px;
+        overflow: auto;
+        padding: 5px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 200;
+        overflow: auto;
+    }
 
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6">
-            <div class="col range">
-                <div class="row">
-                    <font style="margin:8px 0px 0px 16px " align=center size=3>Price:</font>
-                    <div class="col-4 low"><input type="text" class="form-control" placeholder="Minimum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
-                    <font align=center size=5>~</font>
-                    <div class="col-5 high"><input type="text" class="form-control" placeholder="Maximum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
-                </div>
+    .category_list {
+        left: 15px;
+    }
 
-            </div>
+        .category_list:hover {
+            background: #e1d6d6;
+        }
+</style>
+
+@*For Dropdown list*@
+<div class="row" style="margin-top: -47px;width: 100%;  background-color: #c2acde;">
+    <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6" style="margin: 0px;">
+        <div class="search-box">
+            <table>
+                <tr>
+                    <td>
+                        <button type="button" class="dropbtn d-inline-block" title="Categories">
+                        </button>
+                    </td>
+                    <td width="70%">
+                        <input type="text" class="form-control d-inline-block" id="searchText" placeholder="Search product here..">
+                    </td>
+                    <td>
+                        <a class="btn btn-success d-inline-block" style="width:80px; margin:0px">Search</a>
+                    </td>
+                </tr>
+            </table>
         </div>
 
     </div>
-</form>
+
+    <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6">
+        <div class="col range">
+            <div class="row">
+                <font style="margin:8px 0px 0px 16px " align=center size=3>Price:</font>
+                <div class="col-4 low"><input type="text" class="form-control" placeholder="Minimum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+                <font align=center size=5>~</font>
+                <div class="col-5 high"><input type="text" class="form-control" placeholder="Maximum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 
 <div class="container">
-    <div class="row">
+    <div class="row Product_row">
         <div class="col-md-3 product-grid  product_color">
-            <div class="image w3-content w3-section w-100 h-50 ">
+            <div class="image w3-content w3-section w-100">
                 <a asp-controller="Product" asp-action="ViewProduct">
 
                     <img class="mySlides" src="~/images/apple-watch.jpg" style="width:100%">
@@ -116,38 +163,40 @@
             <h6 class="text-center">Price: $159.00</h6>
 
         </div>
-       @if (myProductView.Count() > 0) { 
-        foreach (var Products in myProductView)
+        @if (myProductView.Count() > 0)
         {
+            foreach (var Products in myProductView)
+            {
 
 
 
 
-<div class="col-md-3 product-grid ">
-        <div class="image">
-            <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@Products.Product_Id">
-                @if (Products.Gallery.Count > 0)
-                {
-                <img src="@Products.Gallery[0].URL" alt="@Products.Gallery[0].Name" class="w-100 h-50">
-                }
-                else { 
-            <img class="w-100 h-50" src="~/images/products/noimages.png" alt="No Images"  />
-                }
-                    <div class="overlay">
-                    <div class="detail">View Details</div>
-                </div>
-            </a>
-        </div>
-        <h6 class="text-center">@Products.Product_name</h6>
-        <h6 class="text-center">rs. @Products.Price</h6>
+                <div class="col-md-3 product-grid ">
+                    <div class="image w3-content w3-section w-100 " style="height:65%">
+                        <a onClick="ViewProduct(@Products.Product_Id);">
+                            @if (Products.Gallery.Count > 0)
+                            {
+                                <img src="@Products.Gallery[0].URL" alt="@Products.Gallery[0].Name" style="width:100%; min-height:134.5px; height:100% ">
+                            }
+                            else
+                            {
+                                <img class="w-100 h-50" src="~/images/products/noimages.png" alt="No Images" />
+                            }
+                            <div class="overlay">
+                                <div class="detail">View Details</div>
+                            </div>
+                        </a>
+                    </div>
+                    <h6 class="text-center">@Products.Product_name</h6>
+                    <h6 class="text-center">rs. @Products.Price</h6>
 
-    </div>}
+                </div>}
         }
 
         <!-- ./Product -->
         <!-- Product  -->
         <div class="col-md-3 product-grid">
-            <div class="image">
+            <div class="image w3-content w3-section w-100">
                 <a href="#">
                     <img src="~/images/imac.jpg" class="w-100">
                     <div class="overlay">
@@ -208,19 +257,117 @@
     </div>
 
 </div>
-<script>
-    var myIndex = 0;
-    carousel();
+@*<script>
+        var myIndex = 0;
+        carousel();
 
-    function carousel() {
-        var i;
-        var x = document.getElementsByClassName("mySlides");
-        for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            myIndex++;
+            if (myIndex > x.length) { myIndex = 1 }
+            x[myIndex - 1].style.display = "block";
+            setTimeout(carousel, 2000); // Change image every 2 seconds
         }
-        myIndex++;
-        if (myIndex > x.length) { myIndex = 1 }
-        x[myIndex - 1].style.display = "block";
-        setTimeout(carousel, 2000); // Change image every 2 seconds
+    </script>*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        getBtnText("All", 0);
+    });
+
+    /* When the user clicks on the button,
+    toggle between hiding and showing the dropDown content */
+    function getBtnText(btnText, data_id) {
+        var category = @Html.Raw(Json.Serialize(categories));
+        var btnTexts = btnText+'<div id="mydropDown"><div class="row" style="width:95%">';
+        $.each(category, function (index, value) {
+            btnTexts = btnTexts + '<div class="col col-12 col-sm-3 category_list btn"><a class="category_search" data-id="' + value.Category_id + '" onClick="dropDownBtnClick($(this))">'  + value.Category_name + '</a></div>';
+        });
+        btnTexts = btnTexts + '</div></div>';
+        $(".dropbtn").attr("data-id", data_id);
+        $(".dropbtn").html(btnTexts);
+    };
+
+    function dropDownBtnClick(btn) {
+   @* }
+
+    $('.category_search').on("click", function (e) {
+        var btn = $(this);*@
+        var id = btn.attr("data-id");
+        alert(id);
+        $(".dropbtn").blur();
+        $.ajax({
+            type: "Get",
+            url: "/Product/GetByCategory",
+            data: { 'Id': id },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                $('.Product_row').empty();
+                alert(btn.text());
+                getBtnText(btn.text(), id);
+
+                if (data.length == 0) {
+                    $('.Product_row').append('<div style="color:red">No Match Data</tr>');
+                }else {
+                    $.each(data, function (index, product) {
+
+
+                        var newCol = "<div class='col-md-3 product-grid'><div class='image w3-content w3-section w-100' style='height:65%'>" +
+                            "<a onClick='ViewProduct("+ product.Product_Id +");'>";
+                        //$.each(product.GalleryModel, function (index, value) {
+                            if (product.GalleryModel.length > 0) {
+                                newCol = newCol + "<img src='" + product.GalleryModel[0].URL + "' alt='" + product.GalleryModel[0].Name + "' style='width:100%; min-height:134.5px; height:100%'>";
+                            }
+                            else {
+                                newCol = newCol + "<img class='w-100 h-50' src='~/images/products/noimages.png' alt='No Images' />";
+                            }
+
+                        newCol = newCol + "<div class='overlay'><div class='detail'>View Details</div></div></a></div>" +
+                            "<h6 class='text-center'>" + product.Product_name + "</h6>" +
+                            "<h6 class='text-center'>rs. " + product.Price + "</h6></div>";
+
+                        $('.Product_row').append($(newCol));
+
+                    });
+                }
+                //location.reload();
+            },
+            failure: function (res) {
+                alert(res.responseText);
+            },
+            error: function (res) {
+                alert(res.responseText);
+            }
+
+
+        });
     }
+    function ViewProduct(id) {
+
+        var isLoggedin = $('#isLoggedin').text();
+        
+        if (isLoggedin) 
+            {
+            window.location = '/ViewProduct/' + id;
+        }
+        else {
+
+            alert("Alert : To view product details user must be Loggedin !")
+        }
+    }
+    $(".dropbtn").focus(function () {
+
+        $("#mydropDown").show();
+    });
+    $(".dropbtn").on("change, blur", function () {
+
+        $("#mydropDown").hide();
+    });
+
+
 </script>

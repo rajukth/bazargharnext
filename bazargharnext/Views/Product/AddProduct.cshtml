@@ -117,7 +117,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        $("#btnSubmit").prop("disable", true);
 
         if (@ViewBag.isSuccess == True) {
             var msg = "@ViewBag.Product_Id";
@@ -318,6 +318,8 @@
         $("#select").on('change', function () {
             $(".hide").hide();
             $("#" + $(this).val()).fadeIn(700);
+
+            $("#btnSubmit").prop("disable", false);
         }).change();
 
     });
@@ -592,14 +594,14 @@
             var Title = $("#mTitle").val();
 
             var Details = $("#mDescription").val();
-            alert(Title);
-            alert(Details);
+            $("#mTitle").val("");
+            $("#mDescription").val("");
             var rowCount = $('.product-details-tr').length + 1;
-            var contactdiv = '<tr class="product-details-tr">' +
-                '<td width=40%><input type="text" name="txtTitle' + rowCount + '" class="form-control f-name01" value=' + Title + '></td>' +
-                '<td><input type="text" name="txtDetails' + rowCount + '" class="form-control l-name01" value=' + Details + '></td>' +
-                '<td><button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs" aria-label="Close"><span aria-hidden="true">&times;</span></button></td>' +
-                '</tr>';
+            var contactdiv = $("<tr class='product-details-tr'>" +
+                "<td width=40%><input type='text' name='txtTitle "+ rowCount + "' class='form-control f-name01' value='" + Title + "'></td>" +
+                "<td><input type='text' name='txtDetails'" + rowCount + "' class='form-control l-name01' value='" + Details + "'></td>" +
+                "<td><button type='button' id='btnDelete' class='deleteContact btn btn btn-danger btn-xs' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td>" +
+                "</tr>");
             $('#maintable').append(contactdiv); // Adding these controls to Main table class
         });
     });
@@ -610,7 +612,8 @@
 
     $(function click() {
         $("#btnSubmit").click(function (e) {
-           
+            e.preventDefault();
+            $("#btnSubmit").prop('disabled', true);
             var product = getProduct();
             var product_Details = getAllProductDetails();
             var formData = new FormData();
@@ -636,12 +639,16 @@
                 processData: false,
                 success: function (data) {
                     alert("Product Added Successfully");
+                    $("#btnSubmit").prop('disabled', true);
+                    location.reload();
                 },
                 failure: function (res) {
                     alert(res.responseText);
+                    $("#btnSubmit").prop('disabled', true);
                 },
                 error: function (res) {
                     alert(res.responseText);
+                    $("#btnSubmit").prop('disabled', true);
                 }
 
 

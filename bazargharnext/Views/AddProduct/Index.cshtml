@@ -1,151 +1,138 @@
-﻿@model bazargharnext.ModelsView.MyProductView
+﻿
 @{
     ViewBag.Title = "passingmultiple parameter using jQuery Ajax";
 }
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script type="text/javascript">
 
-  
-    $(document).ready(function () {
-        $(document).on("click", "#addMore", function () { //
-            var rowCount = $('.data-contact-person').length + 1;
-            var contactdiv = '<tr class="data-contact-person">' +
-                '<td><input type="text" name="txtTitle' + rowCount + '" class="form-control f-name01" /></td>' +
-                '<td><input type="text" name="txtDetails' + rowCount + '" class="form-control l-name01" /></td>' +
-                '<td><button type="button" id="addMore" class="btn btn-xs btn-primary classAdd">Add More</button>' +
-                '<button type="button" id="btnDelete" class="deleteContact btn btn btn-danger btn-xs">Remove</button></td>' +
-                '</tr>';
-            $('#maintable').append(contactdiv); // Adding these controls to Main table class
-        });
-    });
-    $(document).on("click", ".deleteContact", function () {
-        $(this).closest("tr").remove(); // closest used to remove the respective 'tr' in which I have my controls   
-    });  
-
-
-    $(function click() {
-        $("#btnSubmit").click(function (e) {
-            e.preventDefault();
-            var product = getProduct();
-            var customers = getAllEmpData();
-          
-            var formData = new FormData();
-            var files = $('#fileUpload').get(0).files;
-            console.log(files);
-            formData.append("Product_Name", product.Product_Name);
-            formData.append("Category_id", 1);
-            formData.append("Price", product.Price);
-            formData.append("Description", product.Description);
-            formData.append("Product_Details", JSON.stringify(customers));
-
-            for (i = 0; i < files.length; i++){
-            formData.append("GalleryFiles", files[i]);
-            }
-            $.ajax({
-                type: "Post",
-                // url: "/AddProduct/Add" + "/?Product=" + JSON.stringify(product) + "&customers=" + JSON.stringify(customers) + "&Gallery=" + JSON.stringify(gallerys),
-                url: "/AddProduct/Add",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    alert(data);
-                },
-                failure: function (res) {
-                    alert(res.responseText);
-                },
-                error: function (res) {
-                    alert(res.responseText);
-                }
-
-
-            });
-        });
-    });
-
-    //data Collection from table 
-    function getProduct() {
-        var product = { 'Product_Name': $("#Product_Name").val(), 'Price': $("#Price").val(), 'Description': $("#Description").val()};
-        return product;
+@{List<Category> categories = ViewBag.Categories;
+    var ProductView = ViewBag.products;
     }
-    function getAllEmpData() {
-        var data = [];
-        $('tr.data-contact-person').each(function () {
-            var Title = $(this).find('.f-name01').val();//Bind to the first name with class f-name01  
-            var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01  
-            var alldata = {
-                'Title': Title, //FName as per Employee class name in .cs  
-                'Description': Details, //LName as per Employee class name in .cs  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-            }
-            data.push(alldata);
-        });
+<style>
+    .dropbtn {
+        background-color: #3498DB;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #2980B9;
+        }
+
+    .dd {
+        position: relative;
+        display: inline-block;
+    }
+    #mydd {
+        position: absolute;
+        display: none;
+        background-color: #f1f1f1;
+        width: 600px;
+        max-width: 600px;
+        min-width: 160px;
+        padding: 5px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        overflow:auto;
+    }
        
-        return data;
+    .category_list{
+        left: 15px;
+        
+    }
+    .category_list:hover {
+        
+        background: #e1d6d6;
+    }
+   
+
+    
+</style>
+<div class="dd">
+    <button class="dropbtn">ALL</button>
+    <div id="mydd">
+        <div class="row" style="width:95%">
+            @foreach (var cat in categories)
+            {
+            <div class="col col-12 col-sm-3 category_list"><a class="btn" style="color:black; padding:0;" onclick="getByCategory(@cat.Category_id)"> @cat.Category_name</a> </div>
+            }
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a> </div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a> </div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
+            
+        </div>
+    </div>
+</div>
+<div class="row imageRow">
+   @foreach(var product in ProductView)
+   {
+    <div class="col col-sm-3"> 
+        <img src="@product.Gallery[0].URL" >
+
+    </div>
+    }
+</div>
+
+<script>
+    /* When the user clicks on the button,
+    toggle between hiding and showing the dd content */
+    function getByCategory(id) {
+
+        alert(id);
+        $("#mydd").hide();
+        $.ajax({
+            type: "Get",
+            url: "/AddProduct/GetByCategory",
+            data: { 'Id': id },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                $('.imageRow').empty();
+               
+                if (data.length == 0) {
+                    $('.imageRow').append('<div style="color:red">No Match Data</tr>');
+                  
+                }
+                else {
+                    $.each(data, function (index, value) {
+
+                        //$.each(value.GalleryModel, function (index, value) {
+                        var newCol = $("<div class='col col-12 col-sm-3'><img src=" + value.GalleryModel[0].URL + " style='width:100px; height:100px;' alt=" + value.GalleryModel[0].Name + "/></div>");
+                            $('.imageRow').append(newCol);
+                        //});
+                    });
+                }
+               //location.reload();
+           },
+           failure: function (res) {
+               alert(res.responseText);
+           },
+           error: function (res) {
+               alert(res.responseText);
+           }
+
+
+       });
     }
 
- 
+  $(".dropbtn").focus(function () {
 
-
-           
+        $("#mydd").show();
+    });
+   @* $(".dropbtn").on("change, blur", function () {
+        $("#mydd").hide();
+    });*@
 
 
 </script>
-<style type="text/css">
-    .btn {
-        font-size: 19px;
-        width: 100px;
-        height: 45px;
-        background: #00BCD4;
-        border-style: solid;
-        border-color: white;
-        color: white;
-    }
-
-    .mytextstyle {
-        font-size: 19px;
-        height: 45px;
-        width: 300px;
-    }
-</style>
-<h2 style="color: #FF5722">
-    passing multiple parameter using jQuery Ajax
-</h2>
-<form enctype = "multipart/form-data">
-    <input type="file" id="fileUpload" multiple="multiple" name="GalleryFiles" asp-for="GalleryFiles" /><br />
-
-    Product Name : <input asp-for="Product_name" type="Text" id="Product_Name" />
-    Price : <input type="text" id="Price"  asp-for="Price"/>
-    Description : <textarea id="Description" asp-for="Description"></textarea>
-
-
-    <table id="maintable" style="border: 1px solid #DED8D8; font-size: 19px; width: 500px; padding: 10px; font-family: Arial;">
-        <tr>
-            <th>Title</th>
-            <th>Details</th>
-        </tr>
-        <tr class="data-contact-person">
-            <td>
-                <input type="text" id="txtTitle0" class="mytextstyle form-control f-name01" />
-            </td>
-            <td>
-                <input type="text" id="txtDetails0" class="mytextstyle form-control l-name01" />
-            </td>
-            <td>
-                <a class="btn btn-primary" id="addMore">Add more</a>
-            </td>
-        </tr>
-        <tfoot>
-            <tr>
-                <td>
-                    &nbsp;
-                </td>
-                <td style="padding-left: 50px">
-                    <input type="submit" id="btnSubmit" class="btn" value="Submit" onclick="click()" />
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-    </form>
-   
