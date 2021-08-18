@@ -19,6 +19,8 @@ namespace bazargharnext.Models
         public String Address { get; set; }
         public String Contact { get; set; }
         public String Photo { get; set; }
+        public String UserRole { get; set; }
+
 
 
 

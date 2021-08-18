@@ -23,13 +23,18 @@ namespace bazargharnext.Controllers
         [Route("index")]
         [Route("~/")]
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             
             _dal = new DataContext();
             ViewBag.Categories = _dal.Category.ToList();
-            var Products = getAllProducts.GetAllProduct();
+            var Products = await getAllProducts.GetAllProduct();
             ViewBag.Products = Products;
+            List<string> ProductName =new List<string>();
+            foreach (var Prod in Products) {
+                ProductName.Add(Prod.Product_name);
+            }
+            ViewBag.ProductName = ProductName;
             _dal.Dispose();
             return View();
         }

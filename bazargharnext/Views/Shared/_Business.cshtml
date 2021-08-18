@@ -14,9 +14,6 @@
 
     @using System
     <environment include="Development">
-
-
-
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet" href="~/css/LoginModel.css" />
@@ -81,7 +78,7 @@
 <body onload=display_ct(); style="background-color:aliceblue">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 100">
-        <a asp-area="" asp-controller="" asp-action="" class="navbar-brand">
+        <a asp-area="" asp-controller="Business" asp-action="" class="navbar-brand">
             <img src="~/images/banner.svg" width="30" height="30" class="d-inline-block align-top" alt="">
             BazarGhar
         </a>
@@ -92,9 +89,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" asp-area="" asp-controller="" asp-action="">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" asp-area="" asp-controller="Business" asp-action="">Home <span class="sr-only">(current)</span></a>
                 </li>
-               
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Category <span class="sr-only">(current)</span></a>
+                </li>
+
+
                 <li class="nav-item">
                     <a asp-area="" asp-controller="Home" asp-action="About" class="nav-link">About</a>
                 </li>
@@ -116,10 +117,11 @@
                 </li>
                 @if (user.UserRole.Equals("Business"))
                 {
-                <li>
-                    <a class="nav-link" asp-controller="Business" asp-action="">Business View</a>
+            <li>
+                
+                <a class="nav-link" asp-controller="Home" asp-action="Index" onclick="">User View</a>
 
-                </li>
+            </li>
                 }
                 <li>
                     <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
@@ -127,7 +129,8 @@
             </ul>
         </form> }
     else
-    {<ul class="navbar-nav ml-auto d-flex">
+    {
+                            <ul class="navbar-nav ml-auto d-flex">
 
 
             <li>

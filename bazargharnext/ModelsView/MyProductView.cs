@@ -25,7 +25,6 @@ namespace bazargharnext.ModelsView
        
 
 
-[Required(ErrorMessage = "Please choose some images")]
         public IFormFileCollection GalleryFiles{get; set;} 
         public List<GalleryModel> Gallery { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using bazargharnext.Models;
 using bazargharnext.ModelsView;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,39 +11,32 @@ namespace bazargharnext.AllFunction
     public class GetAllProducts
     {
         DataContext _dal;
-        public IEnumerable<MyProductView> GetAllProduct()
+        public async Task<List<Product>> GetAllProduct()
         {
             _dal = new DataContext();
             if (_dal.Products.Any())
             {
-                var myProductView = _dal.Products.Select(product => new MyProductView()
+                var products =await _dal.Products.Select(product => new Product()
                 {
                     Product_Id = product.Product_Id,
                     Product_name = product.Product_name,
                     Price = product.Price,
                     Category_id = product.Category_id,
-                    Category_name = _dal.Category.Where(x => x.Category_id == product.Category_id).First().Category_name,
-                    Date = product.Date,
-                    Description = product.Description,
-                    Gallery = product.GalleryModel.Select(g => new GalleryModel()
+                    GalleryModel = product.GalleryModel.Select(g => new GalleryModel()
                     {
                         Id = g.Id,
                         Name = g.Name,
                         URL = g.URL
                     }).ToList(),
-                    Product_Details = product.Product_Details.Select(p => new Product_Details()
-                    {
-                        Id = p.Id,
-                        Title = p.Title,
-                        Description = p.Description
-                    }).ToList()
-
-                }).ToList();
+                    
+                }).ToListAsync();
 
                 _dal.Dispose();
-                return myProductView;
+                return products;
+
             }
-            return new List<MyProductView>();
+            var pro = new List<Product>();
+            return pro;
         }
     }
 }

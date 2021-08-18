@@ -52,85 +52,143 @@
     
 </style>
 <div class="dd">
-    <button class="dropbtn">ALL</button>
-    <div id="mydd">
-        <div class="row" style="width:95%">
-            @foreach (var cat in categories)
-            {
-            <div class="col col-12 col-sm-3 category_list"><a class="btn" style="color:black; padding:0;" onclick="getByCategory(@cat.Category_id)"> @cat.Category_name</a> </div>
-            }
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a> </div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a> </div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            <div class="col col-12 col-sm-3 category_list"><a style="color:black">one</a></div>
-            
-        </div>
-    </div>
-</div>
-<div class="row imageRow">
-   @foreach(var product in ProductView)
-   {
-    <div class="col col-sm-3"> 
-        <img src="@product.Gallery[0].URL" >
+    <div id="levelData"></div>
+    <button class="dropbtn">Choose level</button>
+        <div id="mydd">
+            <div class="row" style="width:95%">
+                <div class="col category_list"><input type="checkbox" id="Pri" value="Pri" class="level"><label class="LavelText">Primary</label></div>
+                <div class="col category_list"><input type="checkbox" id="Sec" value="Sec" class="level"><label class="LavelText">sec</label></div>
+                <div class="col category_list"><input type="checkbox" id="Low" value="Low" class="level"><label class="LavelText">lower</label></div>
+                <div class="col category_list"><button onclick="chooseLevel();">OK</button></div>
 
-    </div>
-    }
+            </div>
+        </div>
+    
 </div>
+
+<input type="text" class="p">
+<input type="text" class="p">
+<button onclick="readp();">btn</button>
 
 <script>
-    /* When the user clicks on the button,
-    toggle between hiding and showing the dd content */
-    function getByCategory(id) {
-
-        alert(id);
-        $("#mydd").hide();
-        $.ajax({
-            type: "Get",
-            url: "/AddProduct/GetByCategory",
-            data: { 'Id': id },
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                $('.imageRow').empty();
-               
-                if (data.length == 0) {
-                    $('.imageRow').append('<div style="color:red">No Match Data</tr>');
-                  
-                }
-                else {
-                    $.each(data, function (index, value) {
-
-                        //$.each(value.GalleryModel, function (index, value) {
-                        var newCol = $("<div class='col col-12 col-sm-3'><img src=" + value.GalleryModel[0].URL + " style='width:100px; height:100px;' alt=" + value.GalleryModel[0].Name + "/></div>");
-                            $('.imageRow').append(newCol);
-                        //});
-                    });
-                }
-               //location.reload();
-           },
-           failure: function (res) {
-               alert(res.responseText);
-           },
-           error: function (res) {
-               alert(res.responseText);
-           }
-
-
-       });
+    function readp() {
+        var dataList = $(".p").map(function () {
+            if ($(this).val()) {
+                return $(this).val();
+            }
+        });
+        console.log(dataList);
     }
 
+</script>
+
+
+<style>
+    #levelData {
+       display:inline-block
+    }
+    .levelCheckData {
+        width:70px;  @*if text and button overlaped increase it *@
+        display: inline-block;
+        border-radius:10px;
+        padding-left:5px; 
+        border:solid black 1px;
+        margin:2px;
+    }
+    .deleteLevel {
+        float:right;
+        margin: 5px;
+        display: inline-block;
+    }
+    .LevelText {
+        margin: 5px;
+        display: inline-block;
+    }
+</style>
+<script>
+    $(document).on("click", ".deleteLevel", function () {
+        row = $(this);
+        var data = row.closest('div').find('p').html();
+        $("#"+data).prop("checked", false);
+
+        row.closest("div").remove();
+});
+    function chooseLevel() {
+        $("#levelData").empty();
+        var dataList = $(".level").map(function () {
+
+            if ($(this).is(':checked')) {
+                var value = $(this).attr("value");
+                $("#levelData").append("<div class='levelCheckData'><p class='LevelText'>" + value + "</p><a class='deleteLevel'><i class='fa fa-trash-o' style='font-size:14px; color:#ff0000'></a></div>")
+                return value;
+                }
+
+        }).get();
+        $("#mydd").hide();
+        console.log(dataList);
+
+    }
+
+    //submit button action
+    $(function click() {
+        $("#btnSubmit").click(function (e) {
+            e.preventDefault();
+            //var product = getProduct();  @*getProduct is a function to collect data in keyValue pair from form *@
+            //var files = $('#my_file').get(0).files; @*image files *@
+
+
+            //formData.append("Price", product.Price);
+            //formData.append("Description", product.Description);
+            formData.append("level", JSON.stringify(dataList));
+            @*for (i = 0; i < files.length; i++) {
+                formData.append("GalleryFiles", files[i]);
+            }*@
+
+
+           $.ajax({
+                type: "Post",
+                url: "/AddProduct/Update", //your ation , with out route  
+                data: formData,     //data collected from  form
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alert("Product updated Successfully");
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+                },
+                error: function (res) {
+                    alert(res.responseText);
+                }
+
+
+            });
+        });
+    });
+@*
+    
+key as model variable , value as data from form 
+
+*@
+@*  
+    
+    function getProduct() {
+
+
+        var product = { 'Product_Id':@myProductView.Product_Id, 'Product_Name': $("#Product_Name").val(), 'Price': $("#Price").val(), 'Description': $("#Description").val(), 'Category_id': $(".Category_id").val() };
+        return product;
+    }*@
+
+
+
+
+   @*for show or hide of choose level*@
   $(".dropbtn").focus(function () {
 
         $("#mydd").show();
     });
-   @* $(".dropbtn").on("change, blur", function () {
+  @*  $(".dropbtn").on("change, blur", function () {
         $("#mydd").hide();
     });*@
 

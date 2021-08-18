@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace bazargharnext.Controllers
 {
     public class RegisterController : Controller
@@ -23,6 +24,7 @@ namespace bazargharnext.Controllers
         [HttpPost]
         public IActionResult RegisterUser(User users)
         {
+            var schema = HttpContext.Request.Scheme;
             var userExist = _dal.Users.ToList().Exists(x => x.Email.Equals(users.Email,StringComparison.CurrentCultureIgnoreCase));
 
             if (userExist)
@@ -36,13 +38,14 @@ namespace bazargharnext.Controllers
                 TempData["Contact"] = users.Contact;
                 TempData["Gender"] = users.Gender;
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(schema);
 
             }
             else
             {
                 users.Password = Encryption(users.Password);
                 users.Photo = "/image/profile/user.png";
+                users.UserRole = "users";
                 _dal.Users.Add(users);
                 _dal.SaveChanges();
 
@@ -55,7 +58,7 @@ namespace bazargharnext.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            
+            var schema = HttpContext.Request.Headers["Referer"];
             User user = _dal.Users.SingleOrDefault(x => x.Email.Equals(email));
 
             if (user != null)
@@ -63,20 +66,22 @@ namespace bazargharnext.Controllers
                 bool isValidPassword = Encryption(password).Equals(user.Password);
                 if (isValidPassword)
                 {
-                    HttpContext.Session.SetString("isLogined", "true");
+                    
+                    HttpContext.Session.SetString("isLoggedin", "true");
+                    HttpContext.Session.SetString("userAs", "user");
                     HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-                    return RedirectToAction("Index", "home");
+                    return Redirect(schema);
                 }
                 else
                 {
                     TempData["LoginError"] = "Email or Password Doesn`t Match ! ";
-                    return RedirectToAction("Index", "Home");
+                    return Redirect(schema);
                 }
             }
             else
             {
                 TempData["LoginError"] = "User Doesn`t Exist ! ";
-                return RedirectToAction("Index", "Home");
+                return Redirect(schema);
             }
         }
 
@@ -85,7 +90,7 @@ namespace bazargharnext.Controllers
 
             HttpContext.Session.Remove("User");
 
-            HttpContext.Session.SetString("isLogined","false");
+            HttpContext.Session.SetString("isLoggedin","false");
             return RedirectToAction("Index", "home");
         
         }

@@ -1,6 +1,12 @@
 @*@inject bazargharnext.Controllers.CategoryController category*@
 @model bazargharnext.ModelsView.MyProductView
 @{ }
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+*@
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+*@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <style>
     .hide {
         display: none;
@@ -114,35 +120,23 @@
         width: 100%;
     }
 </style>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $("#btnSubmit").prop("disable", true);
-
-        if (@ViewBag.isSuccess == True) {
-            var msg = "@ViewBag.Product_Id";
-
-                alert(" Product With Product Id "+msg+" Added Successfully... ");
-
-        }
-    });
-</script>
 
 
-<form method="post" enctype="multipart/form-data" >
+
+<form id="myForm" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col col-4  menu">
             @**@
             @if (ViewBag.IsSuccess == true)
             {
 
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Congratulations</strong> You have added new Product successfully. <br />
-    Click <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>} @**@
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Congratulations</strong> You have added new Product successfully. <br />
+                    Click <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@ViewBag.Product_Id">here</a> to view the details
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>} @**@
             <div class="text-center">
                 <h4>Choose your product type</h4>
                 <select id="select" asp-for="Category_id" class="form-control Category_id" asp-items="@(new SelectList(ViewBag.Category,"Category_id","Category_name"))">
@@ -177,8 +171,81 @@
             </div>
 
             <div class="hide" id="2">
+                <table class="table" id="tbl1" style="width: 100%;">
 
-                Mobile
+                    <thead class="thead-default">
+                        <tr>
+                            <th style="width:40%">
+                                Title
+                            </th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label class="items">Product Name</label></td>
+                            <td>
+                                <input type="Text" class="items Product_Name" />
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label class="items">Price</label></td>
+                            <td>
+                                <input type="Text" class="items Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+
+                            </td>
+                        </tr>
+                        @*Product details section*@
+
+                        <tr class='mobile-product-details-tr'>
+
+                            <td width=40%><label name='txtTitle0' class='f-name01'>Display "</label></td>
+
+                            <td><input type='text' name='txtDetails0' class='form-control l-name01'></td>
+                        </tr>
+                        <tr class='mobile-product-details-tr'>
+
+                            <td width=50%><label name='txtTitle1' class='f-name01'>Battery Condition</label></td>
+
+                            <td><input type='text' name='txtDetails1' class='form-control l-name01'></td>
+                        </tr>
+                        <tr class='mobile-product-details-tr'>
+
+                            <td width=50%><label name='txtTitle2' class='f-name01'>Storage</label></td>
+
+                            <td><input type='text' name='txtDetails2' class='form-control l-name01'></td>
+                        </tr>
+                        <tr class='mobile-product-details-tr'>
+
+                            <td width=40%><label name='txtTitle3' class='f-name01'>RAM</label></td>
+
+                            <td><input type='text' name='txtDetails3' class='form-control l-name01'></td>
+                        </tr>
+                        <tr class='mobile-product-details-tr'>
+
+                            <td width=40%><label name='txtTitle4' class='f-name01'>Processor</label></td>
+
+                            <td><input type='text' name='txtDetails4' class='form-control l-name01'></td>
+                        </tr>
+
+
+
+
+                        @*Product details section*@
+
+                        <tr>
+                            <td><label class="items">Description</label></td>
+                            <td>
+                                <textarea class="items Description" style="resize:none" rows="3" cols="65"></textarea>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                   
+                </table>
+
 
             </div>
             <div class="hide" id="3">@*TV*@TV</div>
@@ -255,7 +322,7 @@
                         <tr>
                             <td><label class="items">Product Name</label></td>
                             <td>
-                                <input type="Text" class="items" id="Product_Name" asp-for="Product_name" />
+                                <input type="Text" class="items Product_Name" asp-for="Product_name" />
 
                                 <span asp-validation-for="Product_name" class="text-danger"></span>
                             </td>
@@ -263,7 +330,7 @@
                         <tr>
                             <td><label class="items">Price</label></td>
                             <td>
-                                <input type="Text" class="items" id="Price" asp-for="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                <input type="Text" class="items Price" asp-for="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
 
                                 <span asp-validation-for="Price" class="text-danger"></span>
                             </td>
@@ -271,14 +338,13 @@
                         <tr>
                             <td><label class="items">Description</label></td>
                             <td>
-                                <textarea asp-for="Description" id="Description" class="items" style="resize:none" rows="3" cols="65"></textarea>
+                                <textarea classs="Description items" style="resize:none" rows="3" cols="65"></textarea>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">
                                 <table class="table" id="maintable">
                                     <tbody>
-                                    
                                     </tbody>
                                 </table>
 
@@ -311,15 +377,16 @@
     </div>
 
 </form>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 @*Div change : function to change the div element as select option onchange event *@
 <script>
     $(document).ready(function () {
         $("#select").on('change', function () {
+           
             $(".hide").hide();
+            
             $("#" + $(this).val()).fadeIn(700);
-
-            $("#btnSubmit").prop("disable", false);
+            
+            
         }).change();
 
     });
@@ -541,7 +608,7 @@
             </div>
             <div class="modal-footer">
                 <button type="reset" id="rest" class="btn btn-secondary">Clear</button>
-                <button type="button" class="btn btn-primary" id="addMoreDetail" data-dismiss="modal" >Add</button>
+                <button type="button" class="btn btn-primary" id="addMoreDetail" data-dismiss="modal">Add</button>
             </div>
 
         </div>
@@ -586,10 +653,9 @@
 </style>
 
 
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(document).on("click", "#addMoreDetail", function () { 
+        $(document).on("click", "#addMoreDetail", function () {
 
             var Title = $("#mTitle").val();
 
@@ -598,7 +664,7 @@
             $("#mDescription").val("");
             var rowCount = $('.product-details-tr').length + 1;
             var contactdiv = $("<tr class='product-details-tr'>" +
-                "<td width=40%><input type='text' name='txtTitle "+ rowCount + "' class='form-control f-name01' value='" + Title + "'></td>" +
+                "<td width=40%><input type='text' name='txtTitle " + rowCount + "' class='form-control f-name01' value='" + Title + "'></td>" +
                 "<td><input type='text' name='txtDetails'" + rowCount + "' class='form-control l-name01' value='" + Details + "'></td>" +
                 "<td><button type='button' id='btnDelete' class='deleteContact btn btn btn-danger btn-xs' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td>" +
                 "</tr>");
@@ -613,23 +679,29 @@
     $(function click() {
         $("#btnSubmit").click(function (e) {
             e.preventDefault();
-            $("#btnSubmit").prop('disabled', true);
+            $("#btnSubmit").prop('disabled', false);
             var product = getProduct();
             var product_Details = getAllProductDetails();
             var formData = new FormData();
-            var files = $('#fileupload').get(0).files;
+            alert($('#fileupload').get(0).files.length);
+           
+                var files = $('#fileupload').get(0).files;
+                
+                for (i = 0; i < files.length; i++) {
+                    formData.append("GalleryFiles", files[i]);
+                }
             
-            console.log(files);
+
+
             formData.append("Product_Name", product.Product_Name);
-            formData.append("Category_id", $("select").val());
+            formData.append("Category_id", product.Category_id);
             formData.append("Price", product.Price);
             formData.append("Description", product.Description);
             formData.append("Product_Details", JSON.stringify(product_Details));
+            console.log(product);
+            console.log(product_Details);
 
-            for (i = 0; i < files.length; i++) {
-                formData.append("GalleryFiles", files[i]);
-            }
-            $.ajax({
+          @**@  $.ajax({
                 type: "Post",
                 // url: "/AddProduct/Add" + "/?Product=" + JSON.stringify(product) + "&customers=" + JSON.stringify(customers) + "&Gallery=" + JSON.stringify(gallerys),
                 url: "/Product/AddProduct",
@@ -639,52 +711,86 @@
                 processData: false,
                 success: function (data) {
                     alert("Product Added Successfully");
-                    $("#btnSubmit").prop('disabled', true);
+                    
                     location.reload();
                 },
                 failure: function (res) {
                     alert(res.responseText);
-                    $("#btnSubmit").prop('disabled', true);
+                    
                 },
                 error: function (res) {
                     alert(res.responseText);
-                    $("#btnSubmit").prop('disabled', true);
+                    
                 }
 
 
             });
 
 
-         
+
         });
     });
 
     //data Collection from table
     function getProduct() {
-        var product = { 'Product_Name': $("#Product_Name").val(), 'Price': $("#Price").val(), 'Description': $("#Description").val(),'Category_id':$(".Category_id").val() };
-        return product;
-    }
- 
-
-
-    function getAllProductDetails() {
-        var data = [];
-        $('tr.product-details-tr').each(function () {
-            var Title = $(this).find('.f-name01').val();//Bind to the first name with class f-name01
-            var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01
-            var alldata = {
-                'Title': Title, //FName as per Employee class name in .cs
-                'Description': Details, //LName as per Employee class name in .cs
-
+        var Product_Name,Price, Description;
+        $(".Product_Name").map(function () {
+            if ($(this).val()) {
+                Product_Name = $(this).val();
             }
-            data.push(alldata);
+        });
+        $(".Price").map(function () {
+            if ($(this).val()) {
+                Price = $(this).val();
+            }
+        });
+        $(".Description").map(function () {
+            if ($(this).val()) {
+                Description = $(this).val();
+            }
         });
 
+
+
+        var product = { 'Product_Name': Product_Name, 'Price': Price, 'Description': Description, 'Category_id': $(".Category_id").val() };
+        return product;
+    }
+    function getAllProductDetails() {
+
+        var data = [];
+
+        switch ($(".Category_id").val()) {
+            case '1':
+                $('tr.product-details-tr').each(function () {
+                    var Title = $(this).find('.f-name01').val();//Bind to the first name with class f-name01
+                    var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01
+                    var alldata = {
+                        'Title': Title, //FName as per Employee class name in .cs
+                        'Description': Details, //LName as per Employee class name in .cs
+
+                    }
+                    data.push(alldata);
+                });
+                break;
+            case '2':
+                $('tr.mobile-product-details-tr').each(function () {
+                    var Title = $(this).find('.f-name01').text();//Bind to the first name with class f-name01
+                    var Details = $(this).find('.l-name01').val();//Bind to the last name with class l-name01
+                    var alldata = {
+                        'Title': Title, //FName as per Employee class name in .cs
+                        'Description': Details, //LName as per Employee class name in .cs
+
+                    }
+                    data.push(alldata);
+                });
+                break;
+
+        }
         return data;
         console.log(data);
     }
 
-   
+
 
 </script>
 

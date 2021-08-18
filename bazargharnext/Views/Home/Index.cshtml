@@ -5,7 +5,8 @@
 @using Microsoft.AspNetCore.Http;
 @{
     List<Category> categories = ViewBag.Categories;
-    IEnumerable<MyProductView> myProductView = ViewBag.Products;
+    List<Product> related = ViewBag.Products;
+    List<Product> myProductView = ViewBag.Products;
 
 }
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css">
@@ -58,6 +59,7 @@
         background: #c2acde;
         border: 4px solid white;
         border-radius: 10px;
+        
     }
 
     .image {
@@ -106,10 +108,14 @@
         .category_list:hover {
             background: #e1d6d6;
         }
+    .autocomplete {
+        position: relative;
+        display: inline-block;
+    }
 </style>
 
 @*For Dropdown list*@
-<div class="row" style="margin-top: -47px;width: 100%;  background-color: #c2acde;">
+<div class="row" style="margin:-45px 0 0 0; width: 100%;  background-color: #c2acde;">
     <div class="col-12 col-sm-12 col-xl-6 col-md-6 col-lg-6" style="margin: 0px;">
         <div class="search-box">
             <table>
@@ -119,10 +125,12 @@
                         </button>
                     </td>
                     <td width="70%">
-                        <input type="text" class="form-control d-inline-block" id="searchText" placeholder="Search product here..">
-                    </td>
+                        <div class="autocomplete" style="width:100%;">
+                            <input type="text" class="form-control d-inline-block" id="searchText" placeholder="Search product here..">
+</div>
+</td>
                     <td>
-                        <a class="btn btn-success d-inline-block" style="width:80px; margin:0px">Search</a>
+                        <a class="btn btn-success d-inline-block" style="width:80px; margin:0px" onClick="Search();">Search</a>
                     </td>
                 </tr>
             </table>
@@ -134,9 +142,9 @@
         <div class="col range">
             <div class="row">
                 <font style="margin:8px 0px 0px 16px " align=center size=3>Price:</font>
-                <div class="col-4 low"><input type="text" class="form-control" placeholder="Minimum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+                <div class="col-4 low"><input type="text" id='min' class="form-control" placeholder="Minimum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
                 <font align=center size=5>~</font>
-                <div class="col-5 high"><input type="text" class="form-control" placeholder="Maximum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
+                <div class="col-5 high"><input type="text" id='max' class="form-control" placeholder="Maximum" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"></div>
             </div>
 
         </div>
@@ -144,9 +152,9 @@
 
 </div>
 
-<div class="container">
+<div class="container" style="margin:-40px 0 0 0 ">
     <div class="row Product_row">
-        <div class="col-md-3 product-grid  product_color">
+        @*<div class="col-md-3 product-grid  product_color">
             <div class="image w3-content w3-section w-100">
                 <a asp-controller="Product" asp-action="ViewProduct">
 
@@ -162,8 +170,8 @@
             <h6 class="text-center">Beats Solo 3 Wireless</h6>
             <h6 class="text-center">Price: $159.00</h6>
 
-        </div>
-        @if (myProductView.Count() > 0)
+        </div>*@
+        @if (myProductView.Count >0)
         {
             foreach (var Products in myProductView)
             {
@@ -174,13 +182,14 @@
                 <div class="col-md-3 product-grid ">
                     <div class="image w3-content w3-section w-100 " style="height:65%">
                         <a onClick="ViewProduct(@Products.Product_Id);">
-                            @if (Products.Gallery.Count > 0)
+                            @if (Products.GalleryModel.Count > 0)
                             {
-                                <img src="@Products.Gallery[0].URL" alt="@Products.Gallery[0].Name" style="width:100%; min-height:134.5px; height:100% ">
+                                var gallery = Products.GalleryModel.ToArray();
+                                <img src="@gallery[0].URL" alt="@gallery[0].Name" style="width:100%; min-height:134.5px; height:100% ">
                             }
                             else
                             {
-                                <img class="w-100 h-50" src="~/images/products/noimages.png" alt="No Images" />
+                                <img style="width:100%; min-height:134.5px; height:100%" src="/images/products/noimages.png" alt="No Images" />
                             }
                             <div class="overlay">
                                 <div class="detail">View Details</div>
@@ -283,7 +292,8 @@
     toggle between hiding and showing the dropDown content */
     function getBtnText(btnText, data_id) {
         var category = @Html.Raw(Json.Serialize(categories));
-        var btnTexts = btnText+'<div id="mydropDown"><div class="row" style="width:95%">';
+        var btnTexts = btnText + '<div id="mydropDown"><div class="row" style="width:95%">' +
+            '<div class="col col-12 col-sm-3 category_list btn"><a class="category_search" data-id=0 onClick="dropDownBtnClick($(this))">All</a></div>';
         $.each(category, function (index, value) {
             btnTexts = btnTexts + '<div class="col col-12 col-sm-3 category_list btn"><a class="category_search" data-id="' + value.Category_id + '" onClick="dropDownBtnClick($(this))">'  + value.Category_name + '</a></div>';
         });
@@ -293,60 +303,80 @@
     };
 
     function dropDownBtnClick(btn) {
-   @* }
-
-    $('.category_search').on("click", function (e) {
-        var btn = $(this);*@
+ 
         var id = btn.attr("data-id");
+        getBtnText(btn.text(), id);
+        Search();
+
         alert(id);
         $(".dropbtn").blur();
-        $.ajax({
-            type: "Get",
-            url: "/Product/GetByCategory",
-            data: { 'Id': id },
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                $('.Product_row').empty();
-                alert(btn.text());
-                getBtnText(btn.text(), id);
-
-                if (data.length == 0) {
-                    $('.Product_row').append('<div style="color:red">No Match Data</tr>');
-                }else {
-                    $.each(data, function (index, product) {
+     
+    }
+    function Search() {
+        var id = $(".dropbtn").attr("data-id");
 
 
-                        var newCol = "<div class='col-md-3 product-grid'><div class='image w3-content w3-section w-100' style='height:65%'>" +
-                            "<a onClick='ViewProduct("+ product.Product_Id +");'>";
-                        //$.each(product.GalleryModel, function (index, value) {
+
+        var text = $("#searchText").val();
+        var min = parseInt(!$("#min").val() ? 0 : $("#min").val());
+        var max = parseInt(!$("#max").val() ? 0 : $("#max").val());
+       
+        if (min<=max) {
+            $.ajax({
+                type: "Get",
+                url: "/Product/searchProduct",
+                data: { 'Id': id, 'search': text, 'min': min, 'max': max },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    $('.Product_row').empty();
+                    //alert(btn.text());
+                   // getBtnText($(".dropbtn").text(), id);
+
+                    if (data.length == 0) {
+                        $('.Product_row').append('<div style="color:red">No Match Data</tr>');
+                    } else {
+                        $.each(data, function (index, product) {
+                            
+                            var newCol = "<div class='col-md-3 product-grid'><div class='image w3-content w3-section w-100' style='height:65%'>" +
+                                "<a onClick='ViewProduct(" + product.Product_Id + ");'>";
+                            //$.each(product.GalleryModel, function (index, value) {
                             if (product.GalleryModel.length > 0) {
                                 newCol = newCol + "<img src='" + product.GalleryModel[0].URL + "' alt='" + product.GalleryModel[0].Name + "' style='width:100%; min-height:134.5px; height:100%'>";
                             }
                             else {
-                                newCol = newCol + "<img class='w-100 h-50' src='~/images/products/noimages.png' alt='No Images' />";
+                                newCol = newCol + "<img src='/images/products/noimages.png' alt='No Images' style='width:100%; min-height:134.5px; height:100%'/>";
                             }
 
-                        newCol = newCol + "<div class='overlay'><div class='detail'>View Details</div></div></a></div>" +
-                            "<h6 class='text-center'>" + product.Product_name + "</h6>" +
-                            "<h6 class='text-center'>rs. " + product.Price + "</h6></div>";
+                            newCol = newCol + "<div class='overlay'><div class='detail'>View Details</div></div></a></div>" +
+                                "<h6 class='text-center'>" + product.Product_name + "</h6>" +
+                                "<h6 class='text-center'>rs. " + product.Price + "</h6></div>";
 
-                        $('.Product_row').append($(newCol));
-
-                    });
+                            $('.Product_row').append($(newCol));
+                           
+                        });
+                    }
+                    //location.reload();
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+                },
+                error: function (res) {
+                    alert(res.responseText);
                 }
-                //location.reload();
-            },
-            failure: function (res) {
-                alert(res.responseText);
-            },
-            error: function (res) {
-                alert(res.responseText);
-            }
 
 
-        });
+            });
+        } else {
+            alert("Maximum price must be greater than minimum price ! ");
+            
+            $("#max").focus();
+        }
+
+       
     }
+
+
     function ViewProduct(id) {
 
         var isLoggedin = $('#isLoggedin').text();
@@ -371,3 +401,139 @@
 
 
 </script>
+@*auto complete for product name*@
+<script>
+    function autocomplete(inp, arr) {
+        /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+        let currentFocus;
+        /*execute a function when someone writes in the text field:*/
+        inp.addEventListener("input", function () {
+            let a, b, i, val = this.value;
+            /*close any already open lists of autocompleted values*/
+            closeAllLists();
+            if (!val) {
+
+                return false;
+            }
+            currentFocus = -1;
+            /*create a DIV element that will contain the items (values):*/
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            a.setAttribute("style", "position: absolute; background:#f5f2f0; width:200px; max-height:400px; overflow:auto; z-index:100;");
+            /*append the DIV element as a child of the autocomplete container:*/
+            this.parentNode.appendChild(a);
+            /*for each item in the array...*/
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    b.setAttribute("class", "list");
+
+
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong class='pointer'>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function () {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        /*execute a function presses a key on the keyboard:*/
+        inp.addEventListener("keydown", function (e) {
+            let x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode === 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode === 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode === 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (let i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            const x = document.getElementsByClassName("autocomplete-items");
+            for (let i = 0; i < x.length; i++) {
+                if (elmnt !== x[i] && elmnt !== inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+
+
+        });
+    }
+
+    /*An array containing all the country names in the world:*/
+    const productName = [];
+    var product = @Html.Raw(Json.Serialize(ViewBag.ProductName));
+    
+    $.each(product, function (index, value) {
+        
+        productName.push(value);
+
+      
+    });
+    //const models = ["aaaaa", "aaaaaa", "cccccc", "bbbbbbb"];
+    /*initiate the autocomplete function on the "carBrands" element, and pass along the brands array as possible autocomplete values:*/
+    autocomplete(document.getElementById("searchText"), productName);
+
+
+</script>
+<style>
+    .list {
+        margin: 5px;
+        padding-left: 20px;
+        cursor: pointer;
+    }
+    .list:hover {
+       background:#ced4da;
+    }
+</style>
+@*auto complete for product name*@
+@**@
