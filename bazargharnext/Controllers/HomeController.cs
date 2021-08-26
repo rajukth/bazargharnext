@@ -25,7 +25,7 @@ namespace bazargharnext.Controllers
         
         public async Task<IActionResult> Index()
         {
-            
+            HttpContext.Session.SetString("userAs", "user");
             _dal = new DataContext();
             ViewBag.Categories = _dal.Category.ToList();
             var Products = await getAllProducts.GetAllProduct();

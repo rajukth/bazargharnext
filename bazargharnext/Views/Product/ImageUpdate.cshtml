@@ -2,23 +2,40 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@using Microsoft.AspNetCore.Http;
+@{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <div class="text-center">
-        <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="ImageUpdate">
-            <div class="form-group">
-                <a class="image" onclick="addimage();">
-                    <img src="~/images/addimageicon.png" title="Upload Image" id="preview" style="width:400px;height:300px;" alt="avatar" class="border img-responsive">
-                </a>
-                <input type="file" id="GalleryFiles" accept="image/*" class="fa fa-camera" hidden>
-                <br />
-                
-            </div>
+        Layout = "_Business";
 
-            <button type="button" class="btn btn-primary UpdateImage" >Update</button>
-        </form>
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 
-    </div>
+
+}
+@{ ViewData["Title"] = "Image"; }
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<div class="text-center">
+    <form method="post" enctype="multipart/form-data" asp-controller="Product" asp-action="ImageUpdate">
+        <div class="form-group">
+            <a class="image" onclick="addimage();">
+                <img src="~/images/addimageicon.png" title="Upload Image" id="preview" style="width:400px;height:300px;" alt="avatar" class="border img-responsive">
+            </a>
+            <input type="file" id="GalleryFiles" accept="image/*" class="fa fa-camera" hidden>
+            <br />
+
+        </div>
+
+        <button type="button" class="btn btn-primary UpdateImage">Update</button>
+    </form>
+
+</div>
 
 
 
@@ -29,9 +46,9 @@
     @**@
     function addimage() {
         $("#GalleryFiles").click();
-       
+
     }
-  
+
     $(function () {
         $("#GalleryFiles").change(function () {
 
@@ -51,7 +68,7 @@
                         alert(file[0].name + " is not a valid image file.");
                         return false;
                     }
-                 
+
 
                 });
 
@@ -67,7 +84,7 @@
     function goBack() {
         window.history.back();
     }
-  
+
     $(document).on("click", ".UpdateImage", function (e) {
         e.preventDefault();
         var formData = new FormData();
@@ -86,7 +103,7 @@
             success: function (data) {
                 alert("Image Updated Successfully");
                 window.history.back();
-               
+
 
             },
             failure: function (res) {

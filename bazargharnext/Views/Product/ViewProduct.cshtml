@@ -3,6 +3,23 @@
 @using Newtonsoft.Json
 @using bazargharnext.ModelsView
 @{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
+
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
+}
+@{ ViewData["Title"] = "Product"; }
+
+@{
 
     MyProductView myProductView = ViewBag.Products;
     List<Product> related = ViewBag.Related;
@@ -354,13 +371,11 @@
         }
 
         .comment-msg-col {
-          
             padding: 5px 10px;
             text-align: center;
         }
 
         .comment-send-col {
-            
             padding: 1%;
             text-align: center;
         }
@@ -426,7 +441,7 @@
                 processData: false,
                 success: function (data) {
                     var Comments = data;
-                  
+
                     var CommentAdded = "<div class='comment-self-row' style='background-color:#fbdddd;' id="+Comments.Comment_Id+">"+
                         "<div class='column3'></div>"+
                         "<div class='column2'>"+
@@ -456,134 +471,136 @@
 
     </script>
     <div class="row">
-    <div class="col col-12 col-sm-9">
-        <div class="comment-section">
+        <div class="col col-12 col-sm-9">
+            <div class="comment-section">
 
-            <div><h2>Comments</h2><h6></h6></div>
+                <div><h2>Comments</h2><h6></h6></div>
 
-            <div class="comment-content-old" id="comment-content-old">
-                @**@
-                @if (myProductView.Comments.Count > 0)
-                {
-                    var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
-                    foreach (var comment in myProductView.Comments)
+                <div class="comment-content-old" id="comment-content-old">
+                    @**@
+                    @if (myProductView.Comments.Count > 0)
                     {
-                        if (comment.User_By != user.Userid)
+                        var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User"));
+                        foreach (var comment in myProductView.Comments)
                         {
+                            if (comment.User_By != user.Userid)
+                            {
 
 
-                            <div class="comment-other-row" style="background-color:#e5e5e5" id="@comment.Comment_Id">
-                                <div class="column1">
-                                    <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
-                                </div>
-                                <div class="column2">
-                                    <p class="msg">@comment.Comment_Text</p>
-                                    <span style="color:#aaa">Reply to:@comment.Reply_To ,  @comment.Date</span>
-                                </div>
-                                <div class="column3">
-                                    <a class="reply" onclick="reply(@comment.Comment_Id,@comment.User_By);">
-                                        <i class="fa fa-reply" aria-hidden="true"></i>
-                                    </a>
+                                <div class="comment-other-row" style="background-color:#e5e5e5" id="@comment.Comment_Id">
+                                    <div class="column1">
+                                        <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
+                                    </div>
+                                    <div class="column2">
+                                        <p class="msg">@comment.Comment_Text</p>
+                                        <span style="color:#aaa">Reply to:@comment.Reply_To ,  @comment.Date</span>
+                                    </div>
+                                    <div class="column3">
+                                        <a class="reply" onclick="reply(@comment.Comment_Id,@comment.User_By);">
+                                            <i class="fa fa-reply" aria-hidden="true"></i>
+                                        </a>
 
 
+                                    </div>
                                 </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="comment-self-row" style="background-color:#fbdddd;">
-                                <div class="column3">
+                            }
+                            else
+                            {
+                                <div class="comment-self-row" style="background-color:#fbdddd;">
+                                    <div class="column3">
 
+                                    </div>
+                                    <div class="column2">
+                                        <p class="msg">@comment.Comment_Text</p>
+                                        <span style="color:#aaa">Reply to: @comment.Reply_To , @comment.Date</span>
+                                    </div>
+                                    <div class="column1">
+                                        <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
+                                    </div>
                                 </div>
-                                <div class="column2">
-                                    <p class="msg">@comment.Comment_Text</p>
-                                    <span style="color:#aaa">Reply to: @comment.Reply_To , @comment.Date</span>
-                                </div>
-                                <div class="column1">
-                                    <img src="@comment.SenderProfile" alt="Avatar" class="avatar">
-                                </div>
-                            </div>
+                            }
                         }
                     }
-                }
-                @**@
-            </div>
-            <div class="comment-new" style="margin-top:6px; border-top-width:5px;">
-                <div class="row">
+                    @**@
+                </div>
+                <div class="comment-new" style="margin-top:6px; border-top-width:5px;">
+                    <div class="row">
 
 
-                    <div class="col col-9 col-sm-10  ">
-                        <textarea rows=3 class="msg" id="msg"></textarea>
-                    </div>
-                    <div class="col col-3 col-sm-2" style="float:left;">
-                        <a class="btn send" id="btnComment">
-                            <i class="fa fa-comments" aria-hidden="true"></i>
-                        </a>
+                        <div class="col col-9 col-sm-10  ">
+                            <textarea rows=3 class="msg" id="msg"></textarea>
+                        </div>
+                        <div class="col col-3 col-sm-2" style="float:left;">
+                            <a class="btn send" id="btnComment">
+                                <i class="fa fa-comments" aria-hidden="true"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col col-12 col-sm-3">
-        <div style="width:100%;height:100%;background:#aaa"> Contact for ads.</div>
+        <div class="col col-12 col-sm-3">
+            <div style="width:100%;height:100%;background:#aaa"> Contact for ads.</div>
 
 
-    </div>
         </div>
+    </div>
     @*Comment section*@
 
 
     @*Related Product view *@
- <div class="row">   <div class="col col-12 col-sm-12">
-        <div class="related">
-            <div style="margin:5px;">
-                <font size="10">Related Product</font>
-            </div>
-            <ul style="padding: 5px;text-align: center;">
-                @for (int i = 0; i < 8; i++)
-                {
-                    int total = related.Count();
-                    Random random = new Random();
-                    int offset = random.Next(0, total);
+    <div class="row">
+        <div class="col col-12 col-sm-12">
+            <div class="related">
+                <div style="margin:5px;">
+                    <font size="10">Related Product</font>
+                </div>
+                <ul style="padding: 5px;text-align: center;">
+                    @for (int i = 0; i < 8; i++)
+                    {
+                        int total = related.Count();
+                        Random random = new Random();
+                        int offset = random.Next(0, total);
 
 
 
-                    <li style="display:inline-block">
-                        <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@related[offset].Product_Id">
-                            <div class=" product-grid ">
-                                <div class="image">
+                        <li style="display:inline-block">
+                            <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@related[offset].Product_Id">
+                                <div class=" product-grid ">
+                                    <div class="image">
 
 
-                                    @if (@related[offset].GalleryModel.Count > 0)
-                                    {
-                                        var gallery = @related[offset].GalleryModel.ToArray();
-                                        <img src="@gallery[0].URL" alt="@gallery[0].Name" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/images/products/noimages.png" alt="No Image" />
-                                    }
-                                    <p class="text-center" style="font-size:10px">@related[offset].Product_name</p>
-                                    <p class="text-center" style="font-size:10px">rs. @related[offset].Price</p>
-                                    <div class="overlay">
-                                        <div class="detail">View Details</div>
+                                        @if (@related[offset].GalleryModel.Count > 0)
+                                        {
+                                            var gallery = @related[offset].GalleryModel.ToArray();
+                                            <img src="@gallery[0].URL" alt="@gallery[0].Name" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/images/products/noimages.png" alt="No Image" />
+                                        }
+                                        <p class="text-center" style="font-size:10px">@related[offset].Product_name</p>
+                                        <p class="text-center" style="font-size:10px">rs. @related[offset].Price</p>
+                                        <div class="overlay">
+                                            <div class="detail">View Details</div>
+                                        </div>
+
                                     </div>
 
+
+
                                 </div>
-
-
-
-                            </div>
-                        </a>
-                    </li>
-                }
-            </ul>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
-    </div></div>
+    </div>
 </div>
 <style type="text/css">
     .related {
-        margin-top:10px;
+        margin-top: 10px;
         height: 290px;
         background: #c9f378;
         overflow: auto;

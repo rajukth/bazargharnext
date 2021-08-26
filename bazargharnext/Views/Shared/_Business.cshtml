@@ -57,7 +57,45 @@
                 padding-top: 5px;
             }
 
-        
+        @*fixed button*@ .fixedButton {
+            z-index: 100;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            border-radius: 50%;
+            background-color: DodgerBlue; /* Blue background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            font-size: 40px; /* Set a font size */
+            padding: 0 12px;
+            cursor: pointer; /* Mouse pointer on hover */
+        }
+
+        .fixedButton:hover {
+            color: antiquewhite;
+            background: #0062cc;
+        }
+
+        .fixedButton .toolTipText {
+            font-size: 16px;
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            right: 105%;
+            z-index: 1;
+        }
+
+        .fixedButton:hover .toolTipText {
+            visibility: visible;
+        }
+
+        @*fixed button*@
             
     </style>
 
@@ -76,7 +114,12 @@
     </script>
 </head>
 <body onload=display_ct(); style="background-color:aliceblue">
-
+    @if (Context.Session.GetString("isLoggedin") == "true")
+    {
+<a class="fixedButton" asp-controller="Product" asp-action="AddProduct">
+    <i class="fa fa-plus-circle"></i>
+    <span class="toolTipText">Add item</span>
+</a>}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 100">
         <a asp-area="" asp-controller="Business" asp-action="" class="navbar-brand">
             <img src="~/images/banner.svg" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -94,7 +137,12 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Category <span class="sr-only">(current)</span></a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Business" asp-action="Sales">My Sales <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Business" asp-action="Purchase">My Purchase<span class="sr-only">(current)</span></a>
+                </li>
 
                 <li class="nav-item">
                     <a asp-area="" asp-controller="Home" asp-action="About" class="nav-link">About</a>
@@ -109,37 +157,36 @@
             <label id="isLoggedin" hidden>@Context.Session.GetString("isLoggedin")</label>
             @if (Context.Session.GetString("isLoggedin") == "true")
             {
-        <form method="post" asp-controller="Register" asp-action="Logout">
-            <ul class="navbar-nav ml-auto d-flex">
-                <li>
-                    @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
-                    <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
-                </li>
-                @if (user.UserRole.Equals("Business"))
-                {
-            <li>
-                
-                <a class="nav-link" asp-controller="Home" asp-action="Index" onclick="">User View</a>
+<form method="post" asp-controller="Register" asp-action="Logout">
+    <ul class="navbar-nav ml-auto d-flex">
+        <li>
+            @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
+            <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
+        </li>
+        @if (user.UserRole.Equals("business"))
+        {
+<li>
 
-            </li>
-                }
-                <li>
-                    <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
-                </li>
-            </ul>
-        </form> }
-    else
-    {
-                            <ul class="navbar-nav ml-auto d-flex">
+    <a class="nav-link" asp-controller="Home" asp-action="Index" onclick="">User View</a>
+
+</li>                }
+        <li>
+            <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
+        </li>
+    </ul>
+</form> }
+else
+{
+<ul class="navbar-nav ml-auto d-flex">
 
 
-            <li>
-                <a id="login" data-target="#myLoginModal" class="nav-link" data-toggle="modal">Login</a>
-            </li>
-            <li>
-                <a id="register" data-target="#myRegistrationModal" class="nav-link" data-toggle="modal">Register</a>
-            </li>
-        </ul>            }
+    <li>
+        <a id="login" data-target="#myLoginModal" class="nav-link" data-toggle="modal">Login</a>
+    </li>
+    <li>
+        <a id="register" data-target="#myRegistrationModal" class="nav-link" data-toggle="modal">Register</a>
+    </li>
+</ul>}
 
         </div>
     </nav>
@@ -289,8 +336,8 @@
                             <input type="text" name="Contact" id="rcontact" required="required" class="form-control text" placeholder="Enter Mobile Number...">
                             <div class="form-group">
                                 <label>Gender :</label>
-                                <div><input id="rmale" type="radio"  name="Gender" value="Male" checked><label>Male</label></div>
-                                <div><input id="rfemale" type="radio"  name="Gender" value="Female"><label>Female</label></div>
+                                <div><input id="rmale" type="radio" name="Gender" value="Male" checked><label>Male</label></div>
+                                <div><input id="rfemale" type="radio" name="Gender" value="Female"><label>Female</label></div>
                             </div>
                             <div class="form-group">
                                 <label style="margin-top: 0"> Address :</label>
@@ -380,4 +427,5 @@ $(document).ready(function() {
 
 
 </script>
+@*View toggle (business or user)*@
 

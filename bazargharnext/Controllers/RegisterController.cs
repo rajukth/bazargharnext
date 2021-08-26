@@ -45,7 +45,7 @@ namespace bazargharnext.Controllers
             {
                 users.Password = Encryption(users.Password);
                 users.Photo = "/image/profile/user.png";
-                users.UserRole = "users";
+                users.UserRole = "user";
                 _dal.Users.Add(users);
                 _dal.SaveChanges();
 
@@ -68,7 +68,7 @@ namespace bazargharnext.Controllers
                 {
                     
                     HttpContext.Session.SetString("isLoggedin", "true");
-                    HttpContext.Session.SetString("userAs", "user");
+                    
                     HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                     return Redirect(schema);
                 }
@@ -84,13 +84,48 @@ namespace bazargharnext.Controllers
                 return Redirect(schema);
             }
         }
+        [HttpPost]
+        public IActionResult BusinessLogin(string email, string password)
+        {
+            
+            User user = _dal.Users.SingleOrDefault(x => x.Email.Equals(email));
 
+            if (user != null)
+            {
+                bool isValidPassword = Encryption(password).Equals(user.Password);
+                if (isValidPassword)
+                {
+                    if (user.UserRole.Equals("business"))
+                    {
+                        HttpContext.Session.SetString("isLoggedin", "true");
+
+                        HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                        return RedirectToAction("Index", "Business");
+                    }
+                    else {
+                        TempData["LoginError"] = "User is not a business User!" ;
+                        return RedirectToAction("Login", "Business");
+                    }
+                }
+                else
+                {
+                    TempData["LoginError"] = "Email or Password Doesn`t Match ! ";
+                    return RedirectToAction("Login","Business");
+                }
+            }
+            else
+            {
+                TempData["LoginError"] = "User Doesn`t Exist ! ";
+                return RedirectToAction("Login", "Business");
+            }
+        }
         public IActionResult Logout()
         {
 
             HttpContext.Session.Remove("User");
 
-            HttpContext.Session.SetString("isLoggedin","false");
+            HttpContext.Session.SetString("isLoggedin", "false"); 
+            HttpContext.Session.SetString("userAs", "user");
             return RedirectToAction("Index", "home");
         
         }

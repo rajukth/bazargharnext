@@ -3,7 +3,7 @@
 *@
 @{
 
-    Layout = "_Business";
+    Layout = "_Admin";
 }
 @using bazargharnext.ModelsView;
 
@@ -79,29 +79,25 @@
         #myTable td {
             padding: 0 10px;
         }
-
-
-
 </style>
 <div class="container">
-    <h3 class="text-center">Today</h3>
     <div class="row">
         <div class="col-sm-4 col-12 card">
             <div class="cardContainer" style="background:#4cff00">
-                <h1>@ViewBag.TotalProduct</h1>
-                <h4 style="text-align: center;"><b>Total Product</b></h4>
+                <h1>00</h1>
+                <h4 style="text-align: center;"><b>Business</b></h4>
 
             </div>
         </div> <div class="col-sm-4 col-12 card">
             <div class="cardContainer" style="background:#b6ff00">
                 <h1>00</h1>
-                <h4 style="text-align: center;"><b>Product Sold</b></h4>
+                <h4 style="text-align: center;"><b>User</b></h4>
 
             </div>
         </div> <div class="col-sm-4 col-12 card">
             <div class="cardContainer" style="background:#aa75ee">
                 <h1>00</h1>
-                <h4 style="text-align: center;"><b>Product Buy's</b></h4>
+                <h4 style="text-align: center;"><b>Product</b></h4>
 
             </div>
         </div>
@@ -109,21 +105,19 @@
     </div>
 
     <div style="margin-top:20px; width:100%">
-        <h3 class="text-center">My Products</h3>
+        <h3 class="text-center">Users</h3>
         <input type="text" id="myInput" onkeyup="filterFunction()" placeholder="Search for product names..">
-        <table id="myTable" class="table-striped table table-striped table-bordered table-sm " width="100%" cellspacing="0">
-            <thead>
-                <tr class="header">
+        <table id="myTable" class="table-striped">
 
-                    <th onclick="sortTable(0)">Product ID </th>
-                    <th onclick="sortTable(1)">Product Name</th>
-                    <th onclick="sortTable(2)">Category</th>
+            <tr class="header">
 
-                    <th class="th-sm" onclick="sortTable(3)">Price(Rs.)</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            
+                <th onclick="sortTable(0)"><p>Product ID <span class="glyphicon glyphicon-triangle-bottom" /></p></th>
+                <th onclick="sortTable(1)">Product Name</th>
+                <th onclick="sortTable(2)">Category</th>
+
+                <th onclick="sortTable(3)">Price(Rs.)</th>
+                <th>Remarks</th>
+            </tr>
             @foreach (MyProductView product in ViewBag.Product)
             {
                 <tr>
@@ -133,13 +127,14 @@
                     <td>@product.Category_id</td>
                     <td style="text-align:end">@product.Price</td>
                     <td style="text-align:center">
-                    <a asp-controller="Product" asp-action="ViewProduct" asp-route-id="@product.Product_Id" class="btn btn-success">View</a>
-                    <a asp-controller="Business" asp-action="sales" asp-route-id="@product.Product_Id" class="btn btn-info">Sell</a></td>
+                        <a href="#" asp-controller="Product" asp-action="ViewProduct" asp-route-id="@product.Product_Id" class="btn btn-success">View</a>
+                        <a href="#" asp-controller="Business" asp-action="sales" asp-route-id="@product.Product_Id" class="btn btn-info">Sell</a>
+                    </td>
 
                 </tr>
             }
 
-            
+
 
         </table>
     </div>
@@ -225,4 +220,5 @@
         }
     }
 </script>
+
 @**@

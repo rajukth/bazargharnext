@@ -1,5 +1,20 @@
 @using Microsoft.AspNetCore.Http;
+@{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
 
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
+}
+@{ ViewData["Title"] = "Profile"; }
 @model IEnumerable<bazargharnext.ModelsView.MyProductView>
 <style>
     .profile {
@@ -29,7 +44,7 @@
 
     .productImage {
         height: 499px;
-        overflow:scroll;
+        overflow: scroll;
         width: auto;
         padding: 10px;
     }
@@ -99,43 +114,6 @@
         }
 
 
-    .fixedButton {
-        z-index: 100;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        border-radius: 50%;
-        background-color: DodgerBlue; /* Blue background */
-        border: none; /* Remove borders */
-        color: white; /* White text */
-        font-size: 40px; /* Set a font size */
-        padding: 0 12px;
-        cursor: pointer; /* Mouse pointer on hover */
-    }
-
-        .fixedButton:hover {
-            color: antiquewhite;
-            background: #0062cc;
-        }
-
-        .fixedButton .toolTipText {
-            font-size: 16px;
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            /* Position the tooltip */
-            position: absolute;
-            right: 105%;
-            z-index: 1;
-        }
-
-        .fixedButton:hover .toolTipText {
-            visibility: visible;
-        }
     /*Image hover preview*/
     .thumbnail {
         position: relative;
@@ -183,17 +161,12 @@
 
 
 </style>
-<a class="fixedButton" asp-controller="Product" asp-action="AddProduct">
-    <i class="fa fa-plus-circle"></i>
-    <span class="toolTipText">Add item</span>
-</a>
+
 
 <div class="row">
     <div class="col-4 ">
         <div class="profile  border">
-            @{
-                User users = ViewBag.MyProfile;
-            }
+            @{ User users = ViewBag.MyProfile; }
 
             <div class="text-center align-content-center">
                 <div>
@@ -256,114 +229,115 @@
 
 
 
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="productImage">
-                                    @if (product.Gallery.Count > 0)
-                                    {
+    <div class="card">
+        <div class="row">
+            <div class="col-4">
+                <div class="productImage">
+                    @if (product.Gallery.Count > 0)
+                    {
 
-                                        for (int i = 0; i < product.Gallery.Count; i++)
-                                        {
-                                            <div class="card">
-                                                <a class="thumbnail" href="">
-                                                    <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" /><span><img src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" width="100" height="100" /></span>
-                                                </a>
-
-
-                                            </div> }
-                                                            }
-                                                            else
-                                                            {
-                                            <div class="card">
-                                                <a class="thumbnail" href="">
-                                                    <img class="image" src="~/images/products/noimages.png" alt="No Images" />
-                                                </a>
-                                                @* <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Product_Id"><i class="fa fa-camera"></i></a>
-                                                *@
-                                            </div>}
-                                </div>
-                            </div>
-                            <div class="col-8">
-                                <div class="description">
-                                    <div class="table">
-                                        <table class="table-bordered table-striped">
+                        for (int i = 0; i < product.Gallery.Count; i++)
+                        {
+    <div class="card">
+        <a class="thumbnail" href="">
+            <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" /><span><img src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" width="100" height="100" style="z-index:100;"/></span>
+        </a>
 
 
-                                            <tr>
-                                                <td>
-                                                    Product ID
-                                                </td>
-                                                <td style="padding: 0 10px ">
-                                                    <div class="row">
-                                                        <label class="col col-8">@product.Product_Id</label>
-                                                        <a class="update col col-2 text-center" title="Update Details" asp-controller="Product" asp-action="Update_Product" asp-route-id="@product.Product_Id"><i class="fa fa-refresh"></i></a>
-                                                        <a class="delete col col-2" title="Delete Products" onclick="delete_Product(@product.Product_Id)"><i class="fa fa-trash" style="color:red;"></i></a>
-                                                    </div>
-                                                </td>
+    </div> }
+}
+else
+{
+<div class="card">
+    <a class="thumbnail" href="">
+        <img class="image" src="~/images/products/noimages.png" alt="No Images" />
+    </a>
+    @* <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Product_Id"><i class="fa fa-camera"></i></a>
+    *@
+</div>}
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="description">
+                    <div class="table">
+                        <table class="table-bordered table-striped">
 
-                                            </tr>
-                                            <tr>
-                                                <td style="width: 30%">
-                                                    Product name:
-                                                </td>
-                                                <td>
-                                                    @product.Product_name
-                                                </td>
 
-                                            </tr>
-                                            <tr>
-                                                <td style="width: 30%">
-                                                    Category:
-                                                </td>
-                                                <td>
-
-                                                    @product.Category_name
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td style="width: 30%">
-                                                    Issue date:
-                                                </td>
-                                                <td>
-                                                    @product.Date
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Price
-                                                </td>
-                                                <td>
-                                                    @product.Price
-
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Description
-
-                                                </td>
-                                                <td>
-                                                    @product.Description
-                                                </td>
-                                            </tr>
-                                            @foreach (var details in product.Product_Details)
-                                            {
                             <tr>
-                                <td>@details.Title</td>
-                                <td>@details.Description</td>
-
-                            </tr>}
-                                        </table>
+                                <td>
+                                    Product ID
+                                </td>
+                                <td style="padding: 0 10px ">
+                                    <div class="row">
+                                        <label class="col col-8">@product.Product_Id</label>
+                                        <a class="update col col-2 text-center" title="Update Details" asp-controller="Product" asp-action="Update_Product" asp-route-id="@product.Product_Id"><i class="fa fa-refresh"></i></a>
+                                        <a class="delete col col-2" title="Delete Products" onclick="delete_Product(@product.Product_Id)"><i class="fa fa-trash" style="color:red;"></i></a>
                                     </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 30%">
+                                    Product name:
+                                </td>
+                                <td>
+                                    @product.Product_name
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 30%">
+                                    Category:
+                                </td>
+                                <td>
+
+                                    @product.Category_name
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 30%">
+                                    Issue date:
+                                </td>
+                                <td>
+                                    @product.Date
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Price
+                                </td>
+                                <td>
+                                    @product.Price
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Description
+
+                                </td>
+                                <td>
+                                    @product.Description
+                                </td>
+                            </tr>
+                            @foreach (var details in product.Product_Details)
+                            {
+            <tr>
+                <td>@details.Title</td>
+                <td>@details.Description</td>
+
+            </tr>
+}
+                        </table>
+                    </div>
 
 
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+        </div>
 
-                    </div>}
+    </div>}
                 <div>
                 </div>
 

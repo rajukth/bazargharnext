@@ -1,6 +1,22 @@
 @*@inject bazargharnext.Controllers.CategoryController category*@
 @model bazargharnext.ModelsView.MyProductView
-@{ }
+@using Microsoft.AspNetCore.Http;
+@{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
+
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
+}
+@{ ViewData["Title"] = "Product"; }
 
 @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 *@
@@ -243,7 +259,7 @@
                         </tr>
 
                     </tbody>
-                   
+
                 </table>
 
 
@@ -381,12 +397,12 @@
 <script>
     $(document).ready(function () {
         $("#select").on('change', function () {
-           
+
             $(".hide").hide();
-            
+
             $("#" + $(this).val()).fadeIn(700);
-            
-            
+
+
         }).change();
 
     });
@@ -683,14 +699,12 @@
             var product = getProduct();
             var product_Details = getAllProductDetails();
             var formData = new FormData();
-            alert($('#fileupload').get(0).files.length);
-           
-                var files = $('#fileupload').get(0).files;
-                
+            var files = $('#fileupload').get(0).files;
+
                 for (i = 0; i < files.length; i++) {
                     formData.append("GalleryFiles", files[i]);
                 }
-            
+
 
 
             formData.append("Product_Name", product.Product_Name);
@@ -711,16 +725,16 @@
                 processData: false,
                 success: function (data) {
                     alert("Product Added Successfully");
-                    
+
                     location.reload();
                 },
                 failure: function (res) {
                     alert(res.responseText);
-                    
+
                 },
                 error: function (res) {
                     alert(res.responseText);
-                    
+
                 }
 
 

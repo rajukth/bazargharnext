@@ -1,4 +1,21 @@
 ﻿@model bazargharnext.ModelsView.MyProductView
+@using Microsoft.AspNetCore.Http;
+@{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
+
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
+}
+@{ ViewData["Title"] = "Update Product"; }
 @using bazargharnext.ModelsView
 @{
 
@@ -9,11 +26,11 @@
 
 @*<script src="//code.jquery.com/jquery-1.10.2.js"></script>*@
 <script type="text/javascript">
-    
-    
+
+
 
     $(document).ready(function () {
-       
+
         $(document).on("click", "#addMore", function () { //
             var rowCount = $('.product-details-tr').length + 1;
             var contactdiv = '<tr class="product-details-tr">' +
@@ -25,7 +42,7 @@
                 '<tr><td colspan="3" class="text-center"><button type="button" id="addMore" class="addMore">Add More</button></td></tr>' +
                 '</tr>';
             $('#mainTable').append(contactdiv); // Adding these controls to Main table class
-          
+
 
         });
     });
@@ -36,7 +53,7 @@
 
                     $.ajax({
                         type: "Get",
-                        url: "/AddProduct/Delete_Product_Details",
+                        url: "/Product/Delete_Product_Details",
                         data: { id: Id },
                         contentType: 'application/x-www-form-urlencoded',
                         success: function (data) {
@@ -59,7 +76,7 @@
 
             }
         });
-   
+
 
     $(document).on("click", ".addMore", function () {
         $(this).closest("tr").remove(); // closest used to remove the respective 'tr' in which I have my controls
@@ -72,7 +89,7 @@
             var product = getProduct();
             var product_Details = getAllProductDetails();
             var files = $('#my_file').get(0).files;
-            
+
             formData.append("Product_Id",@myProductView.Product_Id);
 
             formData.append("Product_Name", product.Product_Name);
@@ -83,7 +100,7 @@
             for (i = 0; i < files.length; i++) {
                 formData.append("GalleryFiles", files[i]);
             }
-            
+
 
            $.ajax({
                 type: "Post",
@@ -138,51 +155,51 @@
 </script>
 @*image add delete and update*@
 <script language="javascript" type="text/javascript">
-   function addimage() {
+    function addimage() {
         $("#my_file").click();
     }
 
     $(function () {
         $("#my_file").change(function () {
-            
+
             if (typeof (FileReader) != "undefined") {
                 var dvPreview = $("#image_row");
-              
-               
-                
+
+
+
                 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
                 $(".image_col_new").remove();
                 $($(this)[0].files).each(function () {
-                   
+
                     var file = $(this);
                     if (regex.test(file[0].name.toLowerCase())) {
                         var reader = new FileReader();
                         reader.onload = function (e) {
-                          
+
                             var image_preview = $(
                                 "<div class='col col-12 col-sm-6 image_col_new'><div class='image-preview'>" +
                                 "<input type='text' hidden><div class='image-card'><img src=" + e.target.result + " alt = 'img' >" +
                                 "</div ></div ></div >");
-                           
-                           
+
+
 
                             dvPreview.append(image_preview);
                         }
                         reader.readAsDataURL(file[0]);
-                        
+
                     } else {
                         alert(file[0].name + " is not a valid image file.");
                         return false;
                     }
                     var inputFile = $("<input type='file' hidden name='GalleryFiles'>");
                     $('#addImageFile').append(inputFile);
-                  
+
                 });
-               
+
             } else {
                 alert("This browser does not support HTML5 FileReader.");
             }
-            
+
         });
     });
     $(document).on("click", ".deleteImage", function () {
@@ -224,7 +241,7 @@
                 success: function (data) {
                     window.history.back();
                     alert("Product Detail Deleted Successfully");
-                    
+
                 },
                 failure: function (res) {
                     alert(res.responseText);
@@ -241,7 +258,7 @@
 
     });
 
-  
+
 </script>
 
 @*image add delete and update*@
@@ -327,10 +344,10 @@
     }
 </style>
 <form method="post" enctype="multipart/form-data">
-    
+
     <div class="container">
         <div class="row">
-           
+
             <div class="col col-12 col-sm-5 img-col">
                 <div class="row" id="image_row">
                     @foreach (var images in myProductView.Gallery)
@@ -456,4 +473,9 @@
     </div>
 
 </form>
+<script>
+    function getProductDetailId(id) {
+        Id = id;
+    }
 
+</script>

@@ -1,18 +1,33 @@
-﻿@{
-    ViewData["Title"] = "Contact";
-}
+﻿
+@using Microsoft.AspNetCore.Http;
+@{ 
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
+
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
+        }
+@{ ViewData["Title"] = "Contact"; }
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
 
 <address>
-    Birtamode<br/>
-    Jhapa, Nepal<br/>
+    Birtamode<br />
+    Jhapa, Nepal<br />
     <abbr title="Phone">P:</abbr>
     98********
 </address>
 
 <address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">support@bazarghar.com</a><br/>
+    <strong>Support:</strong> <a href="mailto:Support@example.com">support@bazarghar.com</a><br />
     <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@bazarghar.com</a>
 </address>
 

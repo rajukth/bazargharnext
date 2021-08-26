@@ -59,47 +59,6 @@
                 padding-top: 5px;
             }
 
-
-        @*fixed button*@
-
-        .fixedButton {
-            z-index: 100;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            border-radius: 50%;
-            background-color: DodgerBlue; /* Blue background */
-            border: none; /* Remove borders */
-            color: white; /* White text */
-            font-size: 40px; /* Set a font size */
-            padding: 0 12px;
-            cursor: pointer; /* Mouse pointer on hover */
-        }
-
-        .fixedButton:hover {
-            color: antiquewhite;
-            background: #0062cc;
-        }
-
-        .fixedButton .toolTipText {
-            font-size: 16px;
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            /* Position the tooltip */
-            position: absolute;
-            right: 105%;
-            z-index: 1;
-        }
-
-        .fixedButton:hover .toolTipText {
-            visibility: visible;
-        }
-        @*fixed button*@
     </style>
 
 
@@ -117,12 +76,6 @@
     </script>
 </head>
 <body onload=display_ct(); style="background-color:aliceblue">
-    @if (Context.Session.GetString("isLoggedin") == "true")
-    {
-<a class="fixedButton" asp-controller="Product" asp-action="AddProduct">
-    <i class="fa fa-plus-circle"></i>
-    <span class="toolTipText">Add item</span>
-</a>}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar" style="z-index: 100">
         <a asp-area="" asp-controller="" asp-action="" class="navbar-brand">
             <img src="~/images/banner.svg" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -135,20 +88,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" asp-area="" asp-controller="" asp-action="">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="">Home <span class="sr-only">(current)</span></a>
                 </li>
-
-                <li class="nav-item">
-                    <a asp-area="" asp-controller="Home" asp-action="About" class="nav-link">About</a>
-                </li>
-                <li class="nav-item">
-                    <a asp-area="" asp-controller="Home" class="nav-link" asp-action="Contact">Contact</a>
-                </li>
-
-
             </ul>
 
-            
+            <label id="isLoggedin" hidden>@Context.Session.GetString("isLoggedin")</label>
             @if (Context.Session.GetString("isLoggedin") == "true")
             {
 <form method="post" asp-controller="Register" asp-action="Logout">
@@ -157,31 +101,14 @@
             @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
             <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
         </li>
-        @if (user.UserRole.Equals("business"))
-        {
-<li>
-    <a class="nav-link" asp-controller="Business" asp-action="" onclick="">Business View</a>
-
-</li>}
+       }
         <li>
             <a class="nav-link" asp-controller="Register" asp-action="LogOut">Logout</a>
         </li>
     </ul>
 </form> }
-else
-{<ul class="navbar-nav ml-auto d-flex">
-
-
-    <li>
-        <a id="login" data-target="#myLoginModal" class="nav-link" data-toggle="modal">Login</a>
-    </li>
-    <li>
-        <a id="register" data-target="#myRegistrationModal" class="nav-link" data-toggle="modal">Register</a>
-    </li>
-</ul>}
-
-        </div>
-    </nav>
+ </div>
+ </nav>
 
 
 
@@ -268,156 +195,11 @@ else
 
 
 
-    <div id="myLoginModal" class="modal fade">
-        <div class="modal-dialog modal-login">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="avatar">
-                        <img src="~/images/user.png" alt="Avatar">
-                    </div>
-                    <h4 class="modal-title">Member Login</h4>
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form asp-controller="Register" asp-action="Login" method="post">
-                        <div class="form-group">
-                            <input type="text" name="email" class="form-control" placeholder="Email" required="required">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="password" class="form-control" placeholder="Password" required="required">
-                        </div>
-                        <div class="form-group modal-header">
-                            <input type="submit" class="btn btn-primary btn-lg btn-block login-btn " id="loginBtn" />
-                        </div>
-                    </form>
-                    <p style="color:red;" id="Message"></p>
-
-                </div>
-                <div class="modal-footer">
-                    <a href="#">Forgot Password?</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    @*Registration model*@
-    <div id="myRegistrationModal" class="modal fade">
-        <div class="modal-dialog modal-login">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="avatar">
-                        <img src="~/images/add-user.png" alt="Avatar">
-                    </div>
-                    <h4 class="modal-title">User Registration</h4>
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-
-
-                    <form method="post" asp-controller="Register" asp-action="RegisterUser">
-
-                        <div class="form-group">
-                            <label>Full Name :</label>
-                            <input type="text" required="required" id="rusername" name="Username" class="form-control text" placeholder="Enter Full Name...">
-
-                            <label>Email :</label>
-                            <input type="email" required="required" id="remail" name="Email" class="form-control text" placeholder="Enter your Email...">
-                            <p style="color:red; margin:0" id="UserMessage"></p>
-                            <label>Password :</label>
-                            <input type="password" required="required" id="rpassword" name="Password" class="form-control text" placeholder="Enter password...">
-                            <label>Mobile :</label>
-                            <input type="text" name="Contact" id="rcontact" required="required" class="form-control text" placeholder="Enter Mobile Number...">
-                            <div class="form-group">
-                                <label>Gender :</label>
-                                <div><input id="rmale" type="radio" name="Gender" value="Male" checked><label>Male</label></div>
-                                <div><input id="rfemale" type="radio" name="Gender" value="Female"><label>Female</label></div>
-                            </div>
-                            <div class="form-group">
-                                <label style="margin-top: 0"> Address :</label>
-                                <textarea class="form-control" id="raddress" name="Address" rows="3" style="resize: none;   width: 280px;height: 80px;overflow-y: auto;" placeholder="Enter Full Address.. "></textarea>
-                            </div>
-
-
-                            <div class="form-group" style="text-align: center">
-                                <input type="submit" class="btn btn-primary btn-lg btn-block login-btn " style="background-color: #4CAF50;" value="SignUp">
-
-                                <input type="reset" class="btn btn-primary btn-lg btn-block login-btn " style="background-color: indianred;" value="Clear">
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-
-                <div class="modal-footer">
-                    Want to register as a business ?
-                    <a class=" bd-footer-links ml-1 font-weight-bold" asp-area="" asp-controller="Home" asp-action="Contact">Contact Us.</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 
 </html>
 
 
 
-<!-- Modal -->
 
-
-<script>
-
-$(document).ready(function() {
-
-    var msg = "@TempData["LoginError"]";
-        //Check the condition if its not empty
-        if (msg != "") {
-
-           $("#Message").text(msg);
-            $('#myLoginModal').modal('show');
-
-        }
-
-
-});
-
-
-</script>
-<script>
-    $(document).ready(function () {
-
-        $("#UserMessage").hide();
-        var usermsg = "@TempData["UserError"]";
-        //Check the condition if its not empty
-        if (usermsg != "") {
-
-            $("#UserMessage").text(usermsg);
-            $("#UserMessage").show();
-           $("#rusername").val("@TempData["Username"]"); 
-            $("#remail").val("@TempData["Email"]");
-    $("#raddress").val("@TempData["Address"]");
-            $("#rcontact").val("@TempData["Contact"]");
-            var gender = "@TempData["Gender"]";
-            $femaleRadio = $('#rfemale');
-            $maleRadio = $('#rmale');
-            if (gender== "Male") {
-                $maleRadio[0].checked = true;
-            } else {
-                $femaleRadio[0].checked = true;
-
-            }
-
-
-
-
-            $('#myRegistrationModal').modal('show');
-
-
-        }
-
-    });
-
-
-</script>
-@*View toggle (business or user)*@
 

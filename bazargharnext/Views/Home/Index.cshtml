@@ -307,8 +307,6 @@
         var id = btn.attr("data-id");
         getBtnText(btn.text(), id);
         Search();
-
-        alert(id);
         $(".dropbtn").blur();
      
     }
@@ -330,9 +328,7 @@
                 dataType: "json",
                 success: function (data) {
                     $('.Product_row').empty();
-                    //alert(btn.text());
-                   // getBtnText($(".dropbtn").text(), id);
-
+                   
                     if (data.length == 0) {
                         $('.Product_row').append('<div style="color:red">No Match Data</tr>');
                     } else {

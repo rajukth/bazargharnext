@@ -1,6 +1,21 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    String viewType = Context.Session.GetString("userAs");
+    if (viewType.Equals("business"))
+    {
+
+        Layout = "_Business";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+
 }
+@{ ViewData["Title"] = "Contact"; }
+@{ ViewData["Title"] = "Privacy Policy"; }
 <h2>@ViewData["Title"]</h2>
 
 <p>Use this page to detail your site's privacy policy.</p>

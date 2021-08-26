@@ -18,7 +18,5 @@ namespace bazargharnext.Models
         public String Title { get; set; }
         public String Description { get; set; }
 
-
-
     }
 }

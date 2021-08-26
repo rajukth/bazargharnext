@@ -102,7 +102,7 @@ namespace bazargharnext.Controllers
                         }
                     }
                 }
-                int id = await AddProductData(product);
+                 int id = await AddProductData(product);
                 if (id > 0) {
                     return RedirectToAction(nameof(AddProduct), new { isSuccess = true, Product_Id = id });
                 }
