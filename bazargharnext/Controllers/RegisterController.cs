@@ -1,4 +1,5 @@
-﻿using bazargharnext.Models;
+﻿using bazargharnext.AllFunction;
+using bazargharnext.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,13 @@ namespace bazargharnext.Controllers
     public class RegisterController : Controller
     {
       readonly private DataContext _dal = new DataContext();
-      
+        private string regCode;
+        public void SetRegCode(string regCode) { 
+        this.regCode=regCode;
+        }
+        public string getRegCode() {
+            return regCode;
+        }
 
        
         [HttpPost]
@@ -43,18 +50,20 @@ namespace bazargharnext.Controllers
             }
             else
             {
+                string code= SendRegisterEmail(reply_to: users.Email);
+               
+                
                 users.Password = Encryption(users.Password);
                 users.Photo = "/image/profile/user.png";
                 users.UserRole = "user";
+               
                 _dal.Users.Add(users);
                 _dal.SaveChanges();
 
                 TempData["LoginError"] = "Most be Logged in First ! ";
                 return RedirectToAction("Index", "Home");
             }
-
-
-        }
+         }
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -171,6 +180,33 @@ namespace bazargharnext.Controllers
                 encryptdata.Append(encrypt[i].ToString());
             }
             return encryptdata.ToString();
+        }
+
+        public string SendRegisterEmail(string reply_to) {
+            
+            Random r = new Random();
+            int randNum = r.Next(1000000);
+            string code = randNum.ToString("D6");
+
+
+            
+            string reply_subject = "Demo Email by bazarghar";
+            string messageDetail = "Please us following code "+code + " to register the account.";
+            SendMail sendMail = new SendMail();
+            sendMail.SendEmail(reply_to, reply_subject, messageDetail);
+
+            return code;
+        }
+        public bool checkCode(string userCode,string systemCode) {
+            if (userCode.Equals(systemCode))
+            {
+                return  true;
+            }
+            else {
+                return false;
+
+            }
+
         }
 
     }

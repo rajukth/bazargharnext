@@ -1,21 +1,20 @@
 @using Microsoft.AspNetCore.Http;
-@{
-    String viewType = Context.Session.GetString("userAs");
-    if (viewType.Equals("business"))
-    {
+@{ String viewType = Context.Session.GetString("userAs");
+                if (viewType.Equals("business"))
+                {
 
-        Layout = "_Business";
+                    Layout = "_Business";
 
-    }
-    else
-    {
-        Layout = "_Layout";
-    }
-
-
-}
+                }
+                else
+                {
+                    Layout = "_Layout";
+                } }
 @{ ViewData["Title"] = "Profile"; }
 @model IEnumerable<bazargharnext.ModelsView.MyProductView>
+
+
+<a class="btn" asp-action="SendRegisterEmail" asp-controller="Register">Send email</a>
 <style>
     .profile {
         margin-top: 25px;
@@ -44,7 +43,7 @@
 
     .productImage {
         height: 499px;
-        overflow: scroll;
+        overflow: auto;
         width: auto;
         padding: 10px;
     }
@@ -60,7 +59,13 @@
             .productImage .card .image {
                 width: 100%;
                 height: 180px;
+                cursor: zoom-in;
+                transition: 0.3s;
             }
+
+                .productImage .card .image:hover {
+                    opacity: 0.7;
+                }
 
             .productImage .card .btn {
                 width: 20%;
@@ -84,6 +89,9 @@
 
     .description {
         padding: 10px;
+        height: 499px;
+        overflow-x: auto;
+        width: auto;
     }
 
         .description .update {
@@ -112,54 +120,6 @@
         .description .delete:hover {
             background-color: #b1dfbb;
         }
-
-
-    /*Image hover preview*/
-    .thumbnail {
-        position: relative;
-        width: 100%;
-        z-index: 1000;
-    }
-
-        .thumbnail:hover {
-            background-color: transparent;
-            z-index: 100;
-        }
-
-
-
-        .thumbnail span {
-            /*CSS for enlarged image*/
-            width: 500px;
-            height: 400px;
-            margin: auto;
-            position: absolute;
-            background-color: whitesmoke;
-            padding: 5px;
-            left: -1000px;
-            border: 1px dashed gray;
-            visibility: hidden;
-            color: black;
-            text-decoration: none;
-        }
-
-            .thumbnail span img {
-                /*CSS for enlarged image*/
-                border-width: 0;
-                width: 100%;
-                height: 100%;
-                padding: 2px;
-            }
-
-        .thumbnail:hover span {
-            /*CSS for enlarged image on hover*/
-            visibility: visible;
-            top: 0;
-            left: 200px; /*position where enlarged image should offset horizontally */
-        }
-    /*image hover preview end*/
-
-
 </style>
 
 
@@ -239,8 +199,8 @@
                         for (int i = 0; i < product.Gallery.Count; i++)
                         {
     <div class="card">
-        <a class="thumbnail" href="">
-            <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" /><span><img src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" width="100" height="100" style="z-index:100;"/></span>
+        <a class="thumbnail">
+            <img class="image" src="@product.Gallery[i].URL" alt="@product.Gallery[i].Name" />
         </a>
 
 
@@ -249,11 +209,9 @@
 else
 {
 <div class="card">
-    <a class="thumbnail" href="">
-        <img class="image" src="~/images/products/noimages.png" alt="No Images" />
-    </a>
-    @* <a class="btn" title="Update Image" asp-controller="Product" asp-action="ImageUpdate" asp-route-id="@product.Product_Id"><i class="fa fa-camera"></i></a>
-    *@
+
+    <img class="image" src="~/images/products/noimages.png" alt="No Images" />
+
 </div>}
                 </div>
             </div>
@@ -323,11 +281,11 @@ else
                             </tr>
                             @foreach (var details in product.Product_Details)
                             {
-            <tr>
-                <td>@details.Title</td>
-                <td>@details.Description</td>
+                        <tr>
+                            <td>@details.Title</td>
+                            <td>@details.Description</td>
 
-            </tr>
+                        </tr>
 }
                         </table>
                     </div>
@@ -346,6 +304,119 @@ else
         </div>
     </div>
 </div>
+
+@*Image zoom modal*@
+<style>
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 50; /* Sit on top */
+        padding-top: 20px; /* Location of the box */
+        left: 10%;
+        top: 10%;
+
+        width: 80%; /* Full width */
+        height:80%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+
+    /* Modal Content (Image) */
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 90%;
+       
+    }
+
+   
+    /* Add Animation - Zoom in the Modal */
+    .modal-content {
+        animation-name: zoom;
+        animation-duration: 0.3s;
+    }
+
+    @@keyframes zoom {
+        from {
+            transform: scale(0)
+        }
+
+        to {
+            transform: scale(1)
+        }
+    }
+
+    /* The Close Button */
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    /* 100% Image Width on Smaller Screens */
+    @@media only screen and (max-width: 700px) {
+        .modal-content {
+            width: 100%;
+        }
+    }
+</style>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- The Close Button -->
+    <span class="close">&times;</span>
+
+    <!-- Modal Content (The Image) -->
+    <img class="modal-content" id="img01">
+
+    <!-- Modal Caption (Image Text) -->
+    <div id="caption"></div>
+</div>
+<script>
+    // Get the modal
+    
+    var modal = document.getElementById("myModal");
+
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    var img = document.getElementsByClassName("image");
+    var modalImg = document.getElementById("img01");
+   
+   var imgClick=function(){
+        modal.style.display = "block";
+        modalImg.src = this.src;
+        
+    }
+        for (var i = 0; i < img.length; i++) {
+            img[i].addEventListener('click', imgClick, false);
+        }
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+   
+</script>
+
+@**@
+
+
+
+
 <script>
     function delete_Product(id) {
 

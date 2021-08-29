@@ -25,6 +25,11 @@ namespace bazargharnext.Controllers
         
         public async Task<IActionResult> Index()
         {
+            string strCmdText;
+            strCmdText = "";
+            System.Diagnostics.Process.Start("CMD.exe", strCmdText);
+
+
             HttpContext.Session.SetString("userAs", "user");
             _dal = new DataContext();
             ViewBag.Categories = _dal.Category.ToList();
@@ -62,7 +67,10 @@ namespace bazargharnext.Controllers
             return View();
         }
 
-      
 
+        public IActionResult RegistrationConfirm()
+        {
+            return View();
+        }
     }
 }
