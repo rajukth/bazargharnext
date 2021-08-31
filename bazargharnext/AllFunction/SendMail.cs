@@ -33,6 +33,7 @@ namespace bazargharnext.AllFunction
             //Repalce [newusername] = signup user name   
             MailText = MailText.Replace("[newusername]", reply_to.Trim());
             MailText = MailText.Replace("[Content]", messageDetail);
+            
 
             MailMessage mailMessage = new MailMessage();
             mailMessage.IsBodyHtml = true;

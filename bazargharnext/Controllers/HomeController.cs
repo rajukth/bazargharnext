@@ -25,10 +25,6 @@ namespace bazargharnext.Controllers
         
         public async Task<IActionResult> Index()
         {
-            string strCmdText;
-            strCmdText = "";
-            System.Diagnostics.Process.Start("CMD.exe", strCmdText);
-
 
             HttpContext.Session.SetString("userAs", "user");
             _dal = new DataContext();
@@ -68,9 +64,6 @@ namespace bazargharnext.Controllers
         }
 
 
-        public IActionResult RegistrationConfirm()
-        {
-            return View();
-        }
+       
     }
 }

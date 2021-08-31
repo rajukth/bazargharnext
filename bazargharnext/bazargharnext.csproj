@@ -36,10 +36,6 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\NewFolder\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="http://json-schema.org/draft-04/schema#" /></VisualStudio></ProjectExtensions>
 
 </Project>

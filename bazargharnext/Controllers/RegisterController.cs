@@ -19,19 +19,14 @@ namespace bazargharnext.Controllers
     public class RegisterController : Controller
     {
       readonly private DataContext _dal = new DataContext();
-        private string regCode;
-        public void SetRegCode(string regCode) { 
-        this.regCode=regCode;
-        }
-        public string getRegCode() {
-            return regCode;
-        }
-
+        
        
+
+
         [HttpPost]
         public IActionResult RegisterUser(User users)
         {
-            var schema = HttpContext.Request.Scheme;
+            var schema = HttpContext.Request.Headers["Referer"]; ;
             var userExist = _dal.Users.ToList().Exists(x => x.Email.Equals(users.Email,StringComparison.CurrentCultureIgnoreCase));
 
             if (userExist)
@@ -45,25 +40,61 @@ namespace bazargharnext.Controllers
                 TempData["Contact"] = users.Contact;
                 TempData["Gender"] = users.Gender;
 
-                return RedirectToAction(schema);
+                return Redirect(schema);
 
             }
             else
             {
-                string code= SendRegisterEmail(reply_to: users.Email);
-               
-                
+                var regCode = Encryption(SendRegisterEmail(reply_to: users.Email));
+                HttpContext.Session.SetString("regCode", regCode);
+                HttpContext.Session.SetString("Register", JsonConvert.SerializeObject(users));
+                return RedirectToAction("RegistrationConfirm");
+             }
+         }
+
+
+        /*registration confirmation */
+        public IActionResult RegistrationConfirm()
+        {
+            
+            return View();
+        }
+        public bool Verify(string VCode)
+        {
+            var regCode = HttpContext.Session.GetString("regCode");
+            VCode = Encryption(VCode);
+            if (checkCode(VCode, regCode))
+            {
+                var users = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("Register"));
                 users.Password = Encryption(users.Password);
-                users.Photo = "/image/profile/user.png";
+                users.Photo = "/images/profile/user.png";
                 users.UserRole = "user";
-               
+
                 _dal.Users.Add(users);
                 _dal.SaveChanges();
 
+                HttpContext.Session.Remove("regCode");
+                HttpContext.Session.Remove("Register");
+
                 TempData["LoginError"] = "Most be Logged in First ! ";
-                return RedirectToAction("Index", "Home");
+                return true;
             }
-         }
+            else
+            {
+                TempData["Error"] = "Verification code doesnt matched";
+                return false;
+            }
+        }
+
+        public void Resend_Code() {
+            var users = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("Register"));
+            var regCode = Encryption(SendRegisterEmail(reply_to: users.Email));
+            HttpContext.Session.SetString("regCode", regCode);
+          }
+
+        /**/
+
+
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -138,6 +169,9 @@ namespace bazargharnext.Controllers
             return RedirectToAction("Index", "home");
         
         }
+
+        
+
         public IActionResult ChangePassword(Password password) {
             User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
             String myPassword = user.Password;
@@ -165,6 +199,75 @@ namespace bazargharnext.Controllers
             }
             
         }
+        //forget password
+        public IActionResult ForgetPassword() {
+
+            return View();
+        }
+
+        public bool ForgetPasswordSendEmail([FromForm]string email) {
+
+           var userExist = _dal.Users.ToList().Exists(x => x.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
+            if (userExist)
+            {
+                User users = _dal.Users.Where(x => x.Email == email).Select(u => new User()
+                {
+                    Userid = u.Userid,
+                    Username=u.Username,
+                    Email=u.Email
+                
+                }).FirstOrDefault();
+                
+                HttpContext.Session.SetString("ForgetUser", JsonConvert.SerializeObject(users));
+                
+                SendForgetPasswordEmail(email);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        public void Resend_Forget_Password_Code()
+        {
+            if (HttpContext.Session.GetString("ForgetUser") != null)
+            {
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("ForgetUser"));
+
+                SendForgetPasswordEmail(user.Email);
+            }
+            else {
+
+                var id = "sdsd ";
+            }
+        }
+
+        public bool Forget_Password_Verify_Code([FromForm]string VCode ) {
+            var regCode = HttpContext.Session.GetString("ForgetPassword");
+            VCode = Encryption(VCode);
+            if (checkCode(VCode, regCode))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        public IActionResult ChangeForgetPassword([FromForm] string password)
+        {
+            
+            password = Encryption(password);
+            var user= JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("ForgetUser"));
+            var users = new User() { Userid = user.Userid, Password = password };
+
+            _dal.Users.Attach(users);
+            _dal.Entry(users).Property(x => x.Password).IsModified = true;
+            _dal.SaveChanges();
+            HttpContext.Session.Remove("ForgetUser");
+            HttpContext.Session.Remove("ForgetPassword");
+            return RedirectToAction("Index","Home");
+        }
+
+        //forget Password
 
         public string Encryption(String password)
         {
@@ -190,13 +293,27 @@ namespace bazargharnext.Controllers
 
 
             
-            string reply_subject = "Demo Email by bazarghar";
-            string messageDetail = "Please us following code "+code + " to register the account.";
+            string reply_subject = code +" Verification code for bazarghar";
+            string messageDetail = "Please us following code to register the account.<br/><h1>"+code+"</h1>";
+            
             SendMail sendMail = new SendMail();
             sendMail.SendEmail(reply_to, reply_subject, messageDetail);
 
             return code;
         }
+        public void SendForgetPasswordEmail(string reply_to)
+        {
+
+            Random r = new Random();
+            int randNum = r.Next(1000000);
+            string code = randNum.ToString("D6");
+            HttpContext.Session.SetString("ForgetPassword", Encryption(code));
+            string reply_subject = code + " Password reset code for bazarghar";
+            string messageDetail = "<h3>Please us following code to reset your password of bazarghar's account.</h3><br/><h1>" + code + "</h1>";
+            SendMail sendMail = new SendMail();
+            sendMail.SendEmail(reply_to, reply_subject, messageDetail);
+        }
+
         public bool checkCode(string userCode,string systemCode) {
             if (userCode.Equals(systemCode))
             {

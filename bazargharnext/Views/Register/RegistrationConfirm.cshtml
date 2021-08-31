@@ -1,0 +1,88 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+   
+}
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<style>
+    .myContainer {
+        width: 60%;
+        height: 50%;
+        border: 1px solid black;
+       margin:auto;
+    }
+</style>
+
+
+<div class="myContainer">
+
+    <h1>Dear Customer,</h1>
+    <p> A verification code was send to your email. Please enter the code below to verify it.</p>
+    <input type="text" placeholder="verification code" id="code" name="code">
+    <br />
+    <input type="button" id="btnSubmit" class="btn btn-info" value="Verify">
+    <span class="Error" hidden></span>
+    <p id="hidden" hidden>Code didn't recived.<a id="resend" asp-controller="Register" asp-action="Resend_Code" >Resend Code </a></p>
+</div>
+<script>
+
+
+
+
+    // A $( document ).ready() block.
+    $(document).ready(function () {
+        $("#hidden").delay(10000).show(0);
+    });
+
+    $(function click() {
+        $("#resend").click(function (e) {
+            e.preventDefault();
+            $(".Error").hide();
+
+        });
+        $("#btnSubmit").click(function (e) {
+            e.preventDefault();
+
+
+            $("#btnSubmit").prop('disabled', true);
+            var VCode = $("#code").val();
+            var formData = new FormData();
+
+            formData.append("VCode", VCode);
+            console.log(formData);
+            @**@$.ajax({
+                type: "Post",
+
+                url: "/Register/Verify",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data == true) {
+                        $("#btnSubmit").prop('disabled', false);
+                        window.history.back();
+                    }
+                    
+                },
+                failure: function (res) {
+                   
+                      $(".Error").show();
+                    $(".Error").val("@TempData["Error"]");
+                    $(".Error").val("Code doesn't matched, Please check email and enter correct again!");
+                },
+                error: function (res) {
+                    alert("error: " + res.responseText);
+
+                }
+
+
+            });
+
+
+
+        });
+    });
+</script>
