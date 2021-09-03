@@ -1,0 +1,195 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    Layout = "_Admin";
+}
+@using bazargharnext.ModelsView;
+
+@using Microsoft.AspNetCore.Http;
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+<style>
+    .myContainer {
+        width: 100%;
+        height: auto;
+    }
+
+    .createDiv {
+        width: 80%;
+        height: auto;
+        margin: 10px auto;
+        border: 1px double blue;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+        .createDiv table {
+            width: 100%;
+        }
+
+            .createDiv table tr {
+                margin-top: 10px;
+            }
+
+    table input[type=text] {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 5px 5px 0;
+    }
+
+    .imageDiv {
+        width: 130px;
+        height: 140px;
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+
+    input[type=file] {
+        display: none;
+    }
+
+    .uploadBtn {
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+        padding: 5px 0;
+        margin: 3px 5px;
+        border:1px solid blue;
+        border-radius: 5px;
+        background-color: #c1c1d9
+    }
+
+        .uploadBtn:hover {
+            background-color: #d9d9c1;
+        }
+</style>
+<form action="" method="post">
+    <div class="myContainer">
+        <div class="createDiv">
+            <table>
+                <tr>
+                    <th colspan="3"><h3>Business Regisration form</h3></th>
+                </tr>
+                <tr>
+                    <th>Business Name *</th>
+                    <td colspan="2"><input type="text" id="businessName" placeholder="Company Name"/></td>
+
+                </tr>
+                <tr>
+                    <th>Address *</th>
+                    <td colspan="2"><input type="text" id="address"  placeholder="Company Address"/></td>
+
+                </tr>
+                <tr>
+                    <th>Contact *</th>
+                    <td><input type="text" id="mobile" placeholder="Mobile *" title="Mobile" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+                    <td><input type="text" id="office" placeholder="Office " title="Office" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+                </tr>
+                <tr>
+                    <th>Email *</th>
+                    <td colSpan="2"><input type="text" id="Email" placeholder="Email *" title="Email" /></td>
+
+                </tr>
+                <tr>
+                    <th>Registration no. </th>
+                    <td colspan="2"><input type="text" id="Registration_no" placeholder="Company Registration Number" title="Company Registration Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+
+                </tr>
+                <tr>
+                    <th>PAN no. </th>
+                    <td colspan="2"><input type="text" id="PAN_no" placeholder="PAN Number" title="PAN Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+
+                </tr>
+
+
+                <tr>
+                    <th>Photo's</th>
+                    <td colspan="3">
+                        <div class="imageBtn">
+
+                            <div><h4 style="display:inline-block; margin:0;">Registration :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <label class="btn uploadBtn" for="registration">
+                                <input id="registration" type="file" accept="image/*" data-max-size="2048"
+                                       onchange="$('#registrationUpload').text(this.files[0].name)">
+                                <span >Upload</span>
+                            </label>
+                            <span class='label label-info' id="registrationUpload"></span>
+                        </div>
+
+                        <div class="imageBtn">
+                            <div ><h4 style="display:inline-block; margin:0;">PAN Certificate :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <label class="btn uploadBtn" for="pan">
+                                <input id="pan" type="file" accept="image/*"
+                                       onchange="$('#panUpload').text(this.files[0].name)">
+                                <span >Upload</span>
+                            </label>
+                            <span class='label label-info' id="panUpload"></span>
+                        </div>
+                        <div class="imageBtn">
+                            <div style=""><h4 style="display:inline-block; margin:0;">Company Logo :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <label class="btn uploadBtn" for="stamp">
+                                <input id="stamp" type="file" accept="image/*"
+                                       onchange="$('#stampUpload').text(this.files[0].name)">
+                                <span>Upload</span>
+                            </label>
+                            <span class='label label-info' id="stampUpload"></span>
+
+                            <!-- <input type="file" id="stamp" placeholder="Upload Company stamp" title="Company stamp" /> -->
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>About Business</th>
+                    <td colspan="2"><div style="width:100%"><Textarea id="Description" style="width:100%; height:80px; font-size:16px;" title="Tell something about business"> </Textarea></div> </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3">
+                        <div class="btnDiv">
+                            <input type="reset" value="Clear Form" class="btn btn-danger" />
+
+                            <input type="button" value="Register" class="btn btn-success" />
+                        </div>
+
+                    </td>
+
+                </tr>
+            </table>
+
+
+        </div>
+
+
+    </div>
+</form>
+
+<script>
+    $('.imageInsert').on('click', addImage);
+
+    function addImage() {
+        var inputBtn = $(this).siblings("input").attr("id");
+        alert(inputBtn);
+        $("#" + inputBtn).click();
+    }
+    $(document).on("change", ".imageInsert[type=file]", function () {
+
+
+        var file = this.files[0];
+        alert(file.size);
+        if (file.size > 2048000) {
+            alert("Too large Image. Only image smaller than 2MB can be uploaded.");
+            $(this).replaceWith("<input class='input-file' id='registration' type='file'  accept='image/*'' data-max-size='2048' hidden onchange='$('#registrationUpload').text(this.files[0].name)'> ");
+            $(this).parent().siblings("span").text(" ");
+
+            return false;
+        }
+    });
+
+
+</script>

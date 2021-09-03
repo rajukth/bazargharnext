@@ -90,6 +90,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="">Home <span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item ">
+    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="CreateBusiness">Create Business User <span class="sr-only">(current)</span></a>
+</li>
             </ul>
 
             <label id="isLoggedin" hidden>@Context.Session.GetString("isLoggedin")</label>

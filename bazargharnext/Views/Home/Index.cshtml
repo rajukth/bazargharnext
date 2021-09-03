@@ -154,23 +154,7 @@
 
 <div class="container" style="margin:-40px 0 0 0 ">
     <div class="row Product_row">
-        @*<div class="col-md-3 product-grid  product_color">
-            <div class="image w3-content w3-section w-100">
-                <a asp-controller="Product" asp-action="ViewProduct">
-
-                    <img class="mySlides" src="~/images/apple-watch.jpg" style="width:100%">
-                    <img class="mySlides" src="~/images/beat.jpg" style="width:100%">
-                    <img class="mySlides" src="~/images/imac.jpg" style="width:100%">
-
-                    <div class="overlay">
-                        <div class="detail">View Details</div>
-                    </div>
-                </a>
-            </div>
-            <h6 class="text-center">Beats Solo 3 Wireless</h6>
-            <h6 class="text-center">Price: $159.00</h6>
-
-        </div>*@
+      
         @if (myProductView.Count >0)
         {
             foreach (var Products in myProductView)
@@ -375,7 +359,7 @@
 
     function ViewProduct(id) {
 
-        var isLoggedin = $('#isLoggedin').text();
+        var isLoggedin = @Context.Session.GetString("isLoggedin");
         
         if (isLoggedin) 
             {
