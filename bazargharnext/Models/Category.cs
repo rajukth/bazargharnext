@@ -14,6 +14,10 @@ namespace bazargharnext.Models
         public int Category_id {
             get;set;
         }
+        public int userid
+        {
+            get; set;
+        }
         public string Category_name {
             get;set;
         }

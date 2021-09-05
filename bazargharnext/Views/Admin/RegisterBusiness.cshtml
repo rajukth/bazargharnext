@@ -2,8 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-
-    Layout = "_Admin";
+   
+    Layout = "_Layout";
 }
 @using bazargharnext.ModelsView;
 
@@ -54,13 +54,17 @@
         display: none;
     }
 
+    .error {
+        color: orangered;
+    }
+
     .uploadBtn {
         display: inline-block;
         width: 100px;
         text-align: center;
         padding: 5px 0;
         margin: 3px 5px;
-        border:1px solid blue;
+        border: 1px solid blue;
         border-radius: 5px;
         background-color: #c1c1d9
     }
@@ -69,7 +73,7 @@
             background-color: #d9d9c1;
         }
 </style>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     <div class="myContainer">
         <div class="createDiv">
             <table>
@@ -78,12 +82,12 @@
                 </tr>
                 <tr>
                     <th>Business Name *</th>
-                    <td colspan="2"><input type="text" id="businessName" placeholder="Company Name"/></td>
+                    <td colspan="2"><input type="text" id="businessname" placeholder="Company Name" /><span class="error"></span></td>
 
                 </tr>
                 <tr>
                     <th>Address *</th>
-                    <td colspan="2"><input type="text" id="address"  placeholder="Company Address"/></td>
+                    <td colspan="2"><input type="text" id="address" placeholder="Company Address" /></td>
 
                 </tr>
                 <tr>
@@ -93,17 +97,17 @@
                 </tr>
                 <tr>
                     <th>Email *</th>
-                    <td colSpan="2"><input type="text" id="Email" placeholder="Email *" title="Email" /></td>
+                    <td colSpan="2"><input type="text" id="email" placeholder="Email *" title="Email" /></td>
 
                 </tr>
                 <tr>
-                    <th>Registration no. </th>
-                    <td colspan="2"><input type="text" id="Registration_no" placeholder="Company Registration Number" title="Company Registration Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+                    <th>Registration no.* </th>
+                    <td colspan="2"><input type="text" id="Registration_no" placeholder="Company Registration Number*" title="Company Registration Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
 
                 </tr>
                 <tr>
-                    <th>PAN no. </th>
-                    <td colspan="2"><input type="text" id="PAN_no" placeholder="PAN Number" title="PAN Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
+                    <th>PAN no.* </th>
+                    <td colspan="2"><input type="text" id="PAN_no" placeholder="PAN Number *" title="PAN Number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /></td>
 
                 </tr>
 
@@ -113,32 +117,32 @@
                     <td colspan="3">
                         <div class="imageBtn">
 
-                            <div><h4 style="display:inline-block; margin:0;">Registration :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <div><h4 style="display:inline-block; margin:0;">Registration *:</h4> (Accept Image only, Size less than 2MB.)</div>
                             <label class="btn uploadBtn" for="registration">
                                 <input id="registration" type="file" accept="image/*" data-max-size="2048"
                                        onchange="$('#registrationUpload').text(this.files[0].name)">
-                                <span >Upload</span>
+                                <span>Upload</span>
                             </label>
                             <span class='label label-info' id="registrationUpload"></span>
                         </div>
 
                         <div class="imageBtn">
-                            <div ><h4 style="display:inline-block; margin:0;">PAN Certificate :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <div><h4 style="display:inline-block; margin:0;">PAN Certificate *:</h4> (Accept Image only, Size less than 2MB.)</div>
                             <label class="btn uploadBtn" for="pan">
                                 <input id="pan" type="file" accept="image/*"
                                        onchange="$('#panUpload').text(this.files[0].name)">
-                                <span >Upload</span>
+                                <span>Upload</span>
                             </label>
                             <span class='label label-info' id="panUpload"></span>
                         </div>
                         <div class="imageBtn">
-                            <div style=""><h4 style="display:inline-block; margin:0;">Company Logo :</h4> (Accept Image only, Size less than 2MB.)</div>
+                            <div style=""><h4 style="display:inline-block; margin:0;">Company Logo *:</h4> (Accept Image only, Size less than 2MB.)</div>
                             <label class="btn uploadBtn" for="stamp">
                                 <input id="stamp" type="file" accept="image/*"
-                                       onchange="$('#stampUpload').text(this.files[0].name)">
+                                       onchange="$('#stampupload').text(this.files[0].name)">
                                 <span>Upload</span>
                             </label>
-                            <span class='label label-info' id="stampUpload"></span>
+                            <span class='label label-info' id="stampupload"></span>
 
                             <!-- <input type="file" id="stamp" placeholder="Upload Company stamp" title="Company stamp" /> -->
                         </div>
@@ -146,7 +150,7 @@
                 </tr>
                 <tr>
                     <th>About Business</th>
-                    <td colspan="2"><div style="width:100%"><Textarea id="Description" style="width:100%; height:80px; font-size:16px;" title="Tell something about business"> </Textarea></div> </td>
+                    <td colspan="2"><div style="width:100%"><Textarea id="about" style="width:100%; height:80px; font-size:16px;" title="Tell something about business"> </Textarea></div> </td>
                 </tr>
 
                 <tr>
@@ -154,7 +158,7 @@
                         <div class="btnDiv">
                             <input type="reset" value="Clear Form" class="btn btn-danger" />
 
-                            <input type="button" value="Register" class="btn btn-success" />
+                            <input type="button" value="Register" class="btn btn-success" id="submitBtn" />
                         </div>
 
                     </td>
@@ -191,5 +195,77 @@
         }
     });
 
+
+</script>
+<script>
+    $('#submitBtn').on('click', function (e) {
+        e.preventDefault();
+        var BusinessName = $("#businessname").val();
+        var Address = $("#address").val();
+        var Mobile = $("#mobile").val();
+        var Office = $("#office").val();
+        var Email = $("#email").val();
+        var Registration_No = $("#Registration_no").val();
+        var Pan_no = $("#PAN_no").val();
+
+
+        var Logo = $("#stamp").get(0).files[0];
+        var RegistrationImage = $("#registration").get(0).files[0];
+        var PanImage = $("#pan").get(0).files[0];
+        var About = $("#about").val();
+      
+
+
+        if (BusinessName != null && Address != null && Mobile != null && Email != null && Registration_No != null && Pan_no != null && RegistrationImage != null && PanImage != null && Logo != null) {
+            var formData = new FormData();
+
+            formData.append("Username", BusinessName);
+            formData.append("Email", Email);
+            formData.append("Address", Address);
+            formData.append("Contact", Mobile);
+            formData.append("Photo", Logo);
+            formData.append("Office_No", Office);
+            formData.append("RegistrationNo", Registration_No);
+            formData.append("PanNo", Pan_no);
+            formData.append("Registration_Image", RegistrationImage);
+            formData.append("Pan_Image", PanImage);
+            formData.append("About", About);
+            console.log(formData);
+            $.ajax({
+                type: "Post",
+                // url: "/AddProduct/Add" + "/?Product=" + JSON.stringify(product) + "&customers=" + JSON.stringify(customers) + "&Gallery=" + JSON.stringify(gallerys),
+                url: "/Register/RegisterBusiness",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data = true) {
+                        alert("Success , A request to open a business account has been send to Admin.\n You will be Contacted via email as soon as possible.\n Thank you. ");
+                        window.history.back();
+                        
+
+                    }
+                },
+                failure: function (res) {
+                    alert(res.responseText);
+
+                },
+                error: function (res) {
+                    alert(res.responseText);
+
+                }
+
+
+            });
+        } else {
+
+            alert ("please Fill all required field !. \nField Having * sign are required Field")
+        }
+
+
+
+
+    });
 
 </script>

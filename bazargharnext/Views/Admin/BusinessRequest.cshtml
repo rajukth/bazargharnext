@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+
+    Layout = "_admin";
+    var BusinessRequest = ViewBag.BusinessRequest;
+
+}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+<table class="table table-striped">
+    <tr>
+        <th>
+            Business Name
+        </th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Office</th>
+        <th>Registration No.</th>
+        <th>Pan NO.</th>
+        <th>Action</th>
+    </tr>
+    @{ if (BusinessRequest != null)
+        {
+            foreach (var request in BusinessRequest)
+            {
+                <tr>
+                    <td>@request.Username</td>
+                    <td>@request.Email</td>
+                    <td>@request.Contact</td>
+                    <td>@request.Office_No</td>
+                    <td>@request.RegistrationNo</td>
+                    <td>@request.PanNo</td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Admin" asp-action="ViewBusiness" asp-route-id="@request.BusinessRegId">View</a>
+                    </td>
+                </tr>
+            }
+        }
+    }
+
+
+</table>
+
+

@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using bazargharnext.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace bazargharnext.Controllers
 {
@@ -21,12 +23,16 @@ namespace bazargharnext.Controllers
         
         public IActionResult Index()
         {
-            var data = dal.Category.ToList();
+            var userid= JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User")).Userid;
+            var data = dal.Category.Where(x=>x.userid==userid).ToList();
             ViewBag.Category = data;
             return View();
         }
         [HttpPost]
         public IActionResult AddCategory(Category category ) {
+            var userid = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User")).Userid;
+            category.userid = userid;
+
             dal.Category.Add(category);
             dal.SaveChanges();
             return RedirectToAction("Index");
@@ -47,7 +53,9 @@ namespace bazargharnext.Controllers
 
         public IActionResult Update(int id)
         {
-            return View("Update", dal.Category.Find(id));
+            var category = dal.Category.Find(id);
+            ViewBag.Category = category;
+            return View("Update");
 
         }
         [HttpPost]
@@ -61,20 +69,5 @@ namespace bazargharnext.Controllers
         }
 
 
-      /*  public async Task<List<Category>> GetCategory()
-        {
-            return await dal.Category.Select(x => new Category()
-            {
-                Category_id = x.Category_id,
-                Category_name=x.Category_name,
-                Category_description=x.Category_description
-            }).ToListAsync();
-        }
-
-        public string GetCategoryNameById(int id) {
-
-            string name = dal.Category.Where(c => c.Category_id == id).First().Category_name;
-            return name;
-        }*/
     }
 }

@@ -1,5 +1,6 @@
 ﻿using bazargharnext.AllFunction;
 using bazargharnext.Models;
+using bazargharnext.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,8 +20,14 @@ namespace bazargharnext.Controllers
     public class RegisterController : Controller
     {
       readonly private DataContext _dal = new DataContext();
-        
-       
+         IWebHostEnvironment _webHostEnvironment;
+        UploadImageFunction UploadImage;
+        public RegisterController(IWebHostEnvironment webHostEnvironment)
+        {
+            _webHostEnvironment = webHostEnvironment;
+            UploadImage = new UploadImageFunction(webHostEnvironment);
+        }
+
 
 
         [HttpPost]
@@ -325,6 +332,44 @@ namespace bazargharnext.Controllers
             }
 
         }
+
+        [HttpPost]
+        public async Task<bool> RegisterBusiness([FromForm]BusinessUserView buv) {
+            string LogoFolder = "images/BusinessLogo/";
+            string RegistrationFolder = "images/Registration/";
+            string PanFolder = "images/PAN/";
+
+            var businessUserRequest = new BusinessUserRequest()
+            {
+                Username = buv.Username,
+                Email = buv.Email,
+                Password = "",
+                Gender = "none",
+                Address = buv.Address,
+                Contact = buv.Contact,
+                Photo = await UploadImage.UploadImage(LogoFolder, buv.Photo),
+                UserRole = "business",
+                Office_No = buv.Office_No,
+                RegistrationNo = buv.RegistrationNo,
+                PanNo = buv.PanNo,
+                Registration_Image = await UploadImage.UploadImage(RegistrationFolder, buv.Registration_Image),
+                Pan_Image=await UploadImage.UploadImage(PanFolder,buv.Pan_Image),
+                About=buv.About
+            };
+
+            _dal.BusinessUserRequests.Add(businessUserRequest);
+            await _dal.SaveChangesAsync();
+
+            
+
+
+
+
+
+            return true;
+        
+        }
+
 
     }
   

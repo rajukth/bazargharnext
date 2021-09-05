@@ -1,0 +1,245 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_admin";
+}
+@{ var request = ViewBag.BusinessRequest; }
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+<style>
+    .MyContainer {
+        height: auto;
+        width: 100%;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+        .MyContainer .row {
+            margin: 0px 5px;
+            border: 1px dotted black;
+        }
+
+    .Title {
+        width: 100%;
+        height: 35px;
+        font-size: 20px;
+        font-weight: 900;
+        padding: 5px;
+        border-left: 1px dashed;
+    }
+
+    .Description {
+        width: 100%;
+        height: auto;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 5px;
+    }
+
+    #logo {
+        width: 200px;
+        height: 200px;
+        border: 1px solid;
+    }
+
+    #registration {
+        width: 100%;
+        height: 700px;
+        border: 1px solid;
+    }
+
+    #pan {
+        width: 100%;
+        height: 500px;
+        border: 1px solid;
+    }
+
+    #message {
+        width: 100%;
+        height: 200px;
+        resize: none;
+    }
+
+    #RejectEmail {
+        display: none;
+        width: 50%;
+        height: 400px;
+        border: 1px solid blue;
+        margin: 5px 10px;
+
+    }
+
+    .sendBtn {
+        width: 80px;
+        position: relative;
+        float: right;
+        background-color: #aabdaf;
+    }
+</style>
+
+<div class="MyContainer">
+    <div class="row">
+        <div class="col col-3 Title">
+            Business name
+        </div>
+
+        <div class="col col-9 Description">
+            @request.Username
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col col-3 Title">
+            Registration No.
+        </div>
+
+        <div class="col col-9 Description">
+            @request.RegistrationNo
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-3 Title">
+            PAN No.
+        </div>
+        <div class="col col-9 Description">
+            @request.PanNo
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-3 Title">
+            Email
+
+        </div>
+
+        <div class="col col-9 Description">
+            @request.Email
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-3 Title">
+            Address
+
+        </div>
+
+        <div class="col col-9 Description">
+            @request.Address
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-3 Title">
+            Contact
+
+        </div>
+
+        <div class="col col-5 Description">
+
+            Mobile : @request.Contact
+        </div>
+        <div class="col col-4 Description">
+            Office : @request.Office_No
+        </div>
+
+    </div><div class="row">
+        <div class="col col-3 Title">
+            Stamp Or Logo
+
+        </div>
+
+        <div class="col col-9 Description">
+            <img src="@request.Photo" id="logo" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-3 Title">
+            Registration Certificate
+        </div>
+
+        <div class="col col-9 Description">
+            <img src="@request.Registration_Image" id="registration" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-3 Title">
+            PAN Certificate
+
+        </div>
+
+        <div class="col col-9 Description">
+            <img src="@request.Pan_Image" id="pan" />
+        </div>
+    </div>
+
+</div>
+<div class="btn-Group">
+    <a class="btn btn-danger" id="rejectBtn">Reject </a>
+    <a class="btn btn-primary" asp-controller="Admin" asp-action="AcceptBusiness" asp-route-id="@request.BusinessRegId">Approve </a>
+</div>
+<br />
+<div id="RejectEmail">
+    <div class="row">
+        <div class="col col-3">Reply To :</div>
+        <div class="col col-9">@request.Email</div>
+    </div>
+    <div class="row">
+        <div class="col col-3">Subject :</div>
+        <div class="col col-9"><b>Rejected : Business User Request Rejected</b></div>
+    </div>
+    <div>
+        Messaage
+    </div>
+    <div class="Message">
+        <textarea id="message">
+
+        </textarea>
+    </div>
+    <a class="btn sendBtn" id="sendBtn">SEND</a>
+</div>
+
+<script>
+    $("#rejectBtn").on('click', function (e) {
+
+        $("#RejectEmail").show();
+        $("#message").focus();
+    });
+
+    $("#sendBtn").on('click', function (e) {
+        e.preventDefault();
+
+        var id =@request.BusinessRegId;
+        var message = $("#message").val();
+
+        var formData = new FormData();
+        formData.append('Id', id);
+        formData.append('Message',message)
+       
+        $.ajax({
+            type: "POST",
+            url: "/admin/Reject",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data = true) {
+                    window.history.back().reload();
+                }
+
+            },
+            failure: function (res) {
+                alert(res.text());
+            }
+    });
+
+
+
+
+
+    });
+
+
+
+</script>

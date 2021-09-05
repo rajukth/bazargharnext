@@ -348,7 +348,7 @@ namespace bazargharnext.Controllers
         //Search by caregory
         /*update*/
         [HttpGet]
-        [Route("update/{id}")]
+        [Route("updateproduct/{id}")]
         public async Task<ViewResult> Update_Product(int Id)
         {
             var myProductView = await GetSingleProductById.GetProductById(Id);

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bazargharnext.Models;
 
 namespace bazargharnext.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210903174340_delete User id from business")]
+    partial class deleteUseridfrombusiness
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,9 +62,6 @@ namespace bazargharnext.Migrations
 
                     b.Property<string>("Category_name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<int>("userid")
-                        .HasColumnType("int");
 
                     b.HasKey("Category_id");
 

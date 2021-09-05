@@ -37,7 +37,7 @@ namespace bazargharnext.Models
 		public DbSet<GalleryModel> Gallery { get; set; }
 		public DbSet<Comments> Comments { get; set; }
 		public DbSet<BusinessUser> BusinessUsers { get; set; }
-		public DbSet<BusinessUserView> BusinessUserViews { get; set; }
+		public DbSet<BusinessUserRequest> BusinessUserRequests { get; set; }
 
 
 	}

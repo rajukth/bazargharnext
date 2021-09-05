@@ -90,9 +90,10 @@
                 <li class="nav-item active">
                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="">Home <span class="sr-only">(current)</span></a>
                 </li>
+                
                 <li class="nav-item ">
-    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="CreateBusiness">Create Business User <span class="sr-only">(current)</span></a>
-</li>
+                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="BusinessRequest">Business Request @Context.Session.GetInt32("requestCount") <span class="sr-only">(current)</span></a>
+                </li>
             </ul>
 
             <label id="isLoggedin" hidden>@Context.Session.GetString("isLoggedin")</label>

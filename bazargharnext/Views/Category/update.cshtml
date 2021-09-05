@@ -27,21 +27,21 @@
     <div class="child">
         <form method="post" asp-controller="Category" asp-action="update">
             <center>  <h3>Update Category</h3></center><br />
-        
+        @{var category = ViewBag.Category; }
             <table>
                 <tr>
                     <th> Category Id </th>
-                    <th> <input type="text" asp-for="Category_id" readonly="readonly"/></th>
+                    <th> <input type="text" value="@category.Category_id" asp-for="Category_id" readonly="readonly"/></th>
 
                 </tr>
                 <tr>
                     <th> Category </th>
-                    <th> <input type="text" asp-for="Category_name" /></th>
+                    <th> <input type="text" value="@category.Category_name" asp-for="Category_name" /></th>
 
                 </tr>
                 <tr>
                     <th> Description </th>
-                    <th> <textarea asp-for="Category_description" rows="5" cols="23" style="resize:none"></textarea></th>
+                    <th> <textarea asp-for="Category_description" rows="5" cols="23" style="resize:none">@category.Category_description"</textarea></th>
 
                 </tr>
                 <tr>

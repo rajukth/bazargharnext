@@ -69,26 +69,6 @@ namespace bazargharnext.AllFunction
             _smtp.Send(mailMessage);
 
 
-
-            /*var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("BazarGhar", "khatiwadatab@gmail.com"));
-            message.To.Add(new MailboxAddress("Dear Customer", reply_to));
-            message.Subject = reply_subject;*/
-
-
-
-
-            /*  message.Body = new TextPart("html")
-              {
-                  Text = messageDetail
-              };
-              using (var client = new SmtpClient())
-              {
-                  client.Connect("smtp.gmail.com", 587, false);
-                  client.Authenticate("khatiwadatab@gmail.com", "khatiwada123");
-                  client.Send(message);
-                  client.Disconnect(true);
-              }*/
             return true;
         }
     }

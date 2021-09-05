@@ -399,8 +399,12 @@
         $("#select").on('change', function () {
 
             $(".hide").hide();
-
-            $("#" + $(this).val()).fadeIn(700);
+            var myId = $(this).val();
+            if (myId == 0 || myId == 1 || myId == 2 || myId == 5) {
+                $("#" + myId).fadeIn(700);
+            } else {
+                $("#1").fadeIn(700);
+            }
 
 
         }).change();
@@ -712,8 +716,7 @@
             formData.append("Price", product.Price);
             formData.append("Description", product.Description);
             formData.append("Product_Details", JSON.stringify(product_Details));
-            console.log(product);
-            console.log(product_Details);
+           
 
           @**@  $.ajax({
                 type: "Post",
