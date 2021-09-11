@@ -17,28 +17,70 @@ namespace bazargharnext.Controllers
         User user;
         public IActionResult Index()
         {
-            HttpContext.Session.SetString("userAs", "business");
-            if (HttpContext.Session.GetString("User") != null)
+            if (HttpContext.Session.GetString("isLoggedin") != "true")
             {
-                user = JsonConvert.DeserializeObject<User>(value: HttpContext.Session.GetString("User"));
-
-                var data = getAllProductsByUserId.GetProductByUserId(user.Userid);
-                ViewBag.TotalProduct = data.Count();
-                ViewBag.Product = data;
-
-                return View();
-            }
-            else {
                 return RedirectToAction("Login");
             }
+            else
+            {
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                if (user.UserRole == "business")
+                {
+                    HttpContext.Session.SetString("userAs", "business");
+                    var data = getAllProductsByUserId.GetProductByUserId(user.Userid);
+                    ViewBag.TotalProduct = data.Count();
+                    ViewBag.Product = data;
+
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            } 
+                   
+          
+          
         }
         public IActionResult Sales() 
         {
-            return View();
+            if (HttpContext.Session.GetString("isLoggedin") != "true")
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                if (user.UserRole == "business")
+                {
+                   
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
         }
         public IActionResult Purchase()
         {
-            return View();
+            if (HttpContext.Session.GetString("isLoggedin") != "true")
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                if (user.UserRole == "business")
+                {
+                 
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
         }
         public IActionResult Login()
         {
@@ -46,8 +88,25 @@ namespace bazargharnext.Controllers
         }
         public IActionResult Profile() {
 
-            return View();
-}
+            if (HttpContext.Session.GetString("isLoggedin") != "true")
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                if (user.UserRole == "business")
+                {
+                   
+
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+        }
 
     }
 }

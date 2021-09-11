@@ -33,7 +33,7 @@ namespace bazargharnext.Controllers
         [HttpPost]
         public IActionResult RegisterUser(User users)
         {
-            var schema = HttpContext.Request.Headers["Referer"]; ;
+            var schema = HttpContext.Request.Headers["Referer"];
             var userExist = _dal.Users.ToList().Exists(x => x.Email.Equals(users.Email,StringComparison.CurrentCultureIgnoreCase));
 
             if (userExist)
@@ -146,7 +146,7 @@ namespace bazargharnext.Controllers
                     {
                         HttpContext.Session.SetString("isLoggedin", "true");
 
-                        HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                        HttpContext.Session.SetString("user", JsonConvert.SerializeObject(user));
                         return RedirectToAction("Index", "Business");
                     }
                     else {

@@ -16,11 +16,23 @@ namespace bazargharnext.Controllers
 {
     public class AdminController : Controller
     {
+       
         DataContext _dal = new DataContext();
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("isLoggedin") != "true") {
+                                
+                
+                
+                return RedirectToAction("Login","Admin");
+            }
+            else{
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                if (user.UserRole == "admin")
+                {
 
-            
+               
+
             var newRequest=_dal.BusinessUserRequests.Count();
             HttpContext.Session.SetInt32("requestCount", newRequest);
 
@@ -32,6 +44,12 @@ namespace bazargharnext.Controllers
             ViewBag.BusinessUser = BusinessUser;
 
             return View();
+                }
+                else
+                {
+                    return RedirectToAction("Login", "Admin");
+                }
+            }
         }
         public IActionResult Login(String email,String Password) {
             User user = _dal.Users.Where(x => x.UserRole=="admin").SingleOrDefault(x => x.Email.Equals(email));
@@ -44,8 +62,8 @@ namespace bazargharnext.Controllers
 
                     HttpContext.Session.SetString("isLoggedin", "true");
 
-                    HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-                    return RedirectToAction("Index","Admin");
+                    HttpContext.Session.SetString("uviva 07ser", JsonConvert.SerializeObject(user));
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -64,11 +82,17 @@ namespace bazargharnext.Controllers
         [Route("registerBusiness")]
         public IActionResult RegisterBusiness()
         {
+           
 
-            return View();
+                    return View();
+           
         }
 
         public IActionResult ApproveBusiness(int id) {
+            if (HttpContext.Session.GetString("isLoggedin") != "true")
+            {
+                return RedirectToAction("Login", "Admin");
+            }
             var businessUserView = _dal.BusinessUserRequests.Where(x => x.BusinessRegId == id).FirstOrDefault();
 
             try
@@ -132,7 +156,6 @@ namespace bazargharnext.Controllers
 
         [Route("acceptbusiness/{id}")]
         public IActionResult AcceptBusiness(int id) {
-
             Random r = new Random();
             int randNum = r.Next(100000000);
             string password = randNum.ToString("D8");

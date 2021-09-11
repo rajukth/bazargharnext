@@ -102,7 +102,7 @@
 <form method="post" asp-controller="Register" asp-action="Logout">
     <ul class="navbar-nav ml-auto d-flex">
         <li>
-            @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("User")); }
+            @{ var user = JsonConvert.DeserializeObject<User>(Context.Session.GetString("user")); }
             <a asp-area="" asp-controller="MyProfile" class="nav-link" asp-action="Index"><h5>Hi, @user.Username</h5></a>
         </li>
        }

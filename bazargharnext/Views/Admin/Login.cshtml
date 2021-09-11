@@ -1,0 +1,110 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+<style>
+    #gotoUser {
+        visibility: hidden;
+        margin: 3px auto 10px 15px;
+        font-size: 20px
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        background-image: url("/images/banner.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .Login-Form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        display: table;
+        width: 400px;
+        height: 200px;
+        background: #00ff21;
+        border: 2px solid red;
+        border-radius: 25px;
+        box-shadow: 10px 10px 5px grey;
+    }
+
+    #myTable {
+        margin: 10px auto;
+    }
+
+        #myTable th, td {
+            padding: 5px 10px;
+        }
+
+        #myTable input {
+            margin: 5px;
+            font-size: 20px;
+        }
+
+        #myTable #colspan {
+            text-align: center
+        }
+
+        #myTable #loginbtn {
+            margin: auto;
+            width: 80px;
+            padding: 3px;
+            background-color: aquamarine;
+        }
+</style>
+<script>
+
+$(document).ready(function() {
+
+    var msg = "@TempData["LoginError"]";
+        //Check the condition if its not empty
+        if (msg != "") {
+            if (msg == "User is not a Admin!") {
+                $("#gotoUser").css("visibility", "visible");
+            }
+           $("#Message").text(msg);
+        }
+});
+</script>
+
+<div class="container">
+    <div class="Login-Form">
+        <form asp-controller="Admin" asp-action="Login" method="post">
+            <table id="myTable">
+                <tr>
+                    <th>
+                        <label style="display:table-cell">Email</label>
+                    </th>
+                    <td>
+                        <input style="display:table-cell" type="text" name="email" placeholder="Email" required="required">
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label style="display:table-cell">Password</label>
+                    </th>
+                    <td>
+                        <input type="password" style="display:table-cell" name="password" placeholder="Password" required="required">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" id="colspan">
+                        <input type="submit" class="btn btn-primary btn-lg btn-block login-btn " id="loginBtn" value="Login" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div id="Message" style="margin-left:15px; color:red; font-size:20px" hidden></div>
+        <div id="gotoUser"><a asp-controller="Home" asp-action="Index">Go to User Login Page!.</a> </div>
+    </div>
+</div>
