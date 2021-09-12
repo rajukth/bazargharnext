@@ -146,7 +146,7 @@ namespace bazargharnext.Controllers
                     {
                         HttpContext.Session.SetString("isLoggedin", "true");
 
-                        HttpContext.Session.SetString("user", JsonConvert.SerializeObject(user));
+                        HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                         return RedirectToAction("Index", "Business");
                     }
                     else {

@@ -27,7 +27,7 @@ namespace bazargharnext.Controllers
                 return RedirectToAction("Login","Admin");
             }
             else{
-                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
                 if (user.UserRole == "admin")
                 {
 
@@ -62,7 +62,7 @@ namespace bazargharnext.Controllers
 
                     HttpContext.Session.SetString("isLoggedin", "true");
 
-                    HttpContext.Session.SetString("uviva 07ser", JsonConvert.SerializeObject(user));
+                    HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                     return RedirectToAction("Index");
                 }
                 else

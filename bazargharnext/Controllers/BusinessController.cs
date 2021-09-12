@@ -23,7 +23,7 @@ namespace bazargharnext.Controllers
             }
             else
             {
-                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
                 if (user.UserRole == "business")
                 {
                     HttpContext.Session.SetString("userAs", "business");
@@ -50,7 +50,7 @@ namespace bazargharnext.Controllers
             }
             else
             {
-                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
                 if (user.UserRole == "business")
                 {
                    
@@ -70,7 +70,7 @@ namespace bazargharnext.Controllers
             }
             else
             {
-                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
                 if (user.UserRole == "business")
                 {
                  
@@ -94,7 +94,7 @@ namespace bazargharnext.Controllers
             }
             else
             {
-                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
                 if (user.UserRole == "business")
                 {
                    
