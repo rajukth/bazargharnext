@@ -9,8 +9,8 @@ using bazargharnext.Models;
 namespace bazargharnext.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220518080407_UserRoleAdded")]
-    partial class UserRoleAdded
+    [Migration("20220518081047_createDb")]
+    partial class createDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
